@@ -42,3 +42,8 @@
   max-height: 50vh;
   overflow: scroll;
 }
+
+small {
+  font-weight: 400;
+  color: #585a5c;
+}

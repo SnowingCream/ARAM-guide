@@ -1,7 +1,7 @@
 import "../asset/App.css";
 import Footer from "./Footer.jsx";
 import Header from "./Header.jsx";
-import BodyTest from "./BodyTest.jsx";
+import Body from "./Body.jsx";
 import axios from "axios";
 import { useEffect } from "react";
 // import "bootstrap/dist/css/bootstrap.min.css";
@@ -19,7 +19,7 @@ function App() {
     <div>
       <Header />
       {/* <main>Main section</main> */}
-      <BodyTest />
+      <Body />
       <Footer />
     </div>
   );
