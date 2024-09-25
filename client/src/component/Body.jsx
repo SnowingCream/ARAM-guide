@@ -3,76 +3,137 @@ import { region_list } from "../asset/var";
 
 function createList(content, idx) {
   return (
-    <option value={idx.toString() + "_" + content.abbrWithNum}>
+    <option key={idx} value={idx.toString() + "_" + content.abbrWithNum}>
       {content.full}
     </option>
   );
 }
 
+function createAbbrList(content, idx) {
+  return <option key={idx}>{content.abbr}</option>;
+}
+
+function stopShake() {
+  document.getElementById("search-button").classList.remove("apply-shake");
+}
+
 function Body() {
-  const [placeHolder, setPlaceHolder] = useState("Player Name#Tag");
+  const [placeHolder, setPlaceHolder] = useState("Player Name#NA1");
+  const [warningMessage, setWarningMessage] = useState(
+    "Default warning message"
+  );
 
   function updatePlaceHolder() {
-    console.log(document.getElementById("region").value.split("_")[0]);
-    console.log(document.getElementById("selected").value);
+    console.log(document.getElementById("region2").value);
 
-    const idx = parseInt(document.getElementById("region").value.split("_")[0]);
+    const idx = parseInt(
+      document.getElementById("region2").value.split("_")[0]
+    );
 
     setPlaceHolder("Player Name#" + region_list[idx].abbrWithNum);
+
+    document.getElementById("region1").selectedIndex =
+      document.getElementById("region2").selectedIndex;
+
+    document.getElementById("region2").style.display = "none";
+    document.getElementById("region1").style.display = "inline-block";
+  }
+
+  function handleSearch() {
+    const warningMessageTag = document.getElementById("warning-message");
+    const searchButton = document.getElementById("search-button");
+
+    const championInputValue = document
+      .getElementById("input-champion")
+      .value.trim();
+    const playerInputValue = document
+      .getElementById("input-player")
+      .value.trim();
+
+    if (championInputValue && playerInputValue) {
+      setWarningMessage("Please fill out just one of the input fields.");
+      warningMessageTag.style.display = "inline";
+      searchButton.classList.add("apply-shake");
+    } else if (!championInputValue && !playerInputValue) {
+      setWarningMessage("Please fill out at least one of the input fields.");
+      warningMessageTag.style.display = "inline";
+      searchButton.classList.add("apply-shake");
+    } else {
+      // post request starts here
+      setWarningMessage("Valid search, we will process your request shortly.");
+      warningMessageTag.style.display = "inline";
+    }
   }
 
   return (
-    <div class="container px-4 py-5 my-5 text-center">
-      <h1 class="display-5 fw-bold text-body-emphasis">ARAM Guide</h1>
-      <div class="col-lg-8 mx-auto">
-        <p class="lead mb-4">
+    <div className="container px-4 py-5 my-5 text-center">
+      <h1 className="display-5 fw-bold text-body-emphasis">ARAM Guide</h1>
+      <div className="col-lg-8 mx-auto">
+        <p className="lead mb-4">
           Check out most popular ARAM builds for champions, and track your ARAM
           records.
         </p>
         <input
           type="text"
-          class="form-control col-sm"
-          id="info-email"
+          className="form-control col-sm"
+          id="input-champion"
           placeholder="Champion"
         />
-        <p class="lead my-2 mx-3 pb-1"> or </p>
-        <div class="row d-sm-flex justify-content-sm-center">
-          <div class="col-3 px-2">
+        <p className="lead my-2 mx-3 pb-1"> or </p>
+        <div className="row d-sm-flex justify-content-sm-center">
+          <div className="col-3 px-2">
             <select
-              id="region"
+              id="region2"
               name="region"
               onChange={updatePlaceHolder}
-              class="form-select"
+              className="form-select"
               aria-label="Default select example"
+              defaultValue="0_NA1"
             >
-              <option selected id="selected">
-                Region
-              </option>
               {region_list.map(createList)}
             </select>
+
+            <select
+              id="region1"
+              name="region"
+              onMouseOver={() => {
+                document.getElementById("region2").style.display =
+                  "inline-block";
+                document.getElementById("region1").style.display = "none";
+              }}
+              className="form-select"
+              aria-label="Default select example"
+              // defaultValue="0_NA1"
+            >
+              {region_list.map(createAbbrList)}
+            </select>
           </div>
-          <div class="col-9">
+          <div className="col-9">
             <input
               type="text"
-              class="form-control col-6"
-              id="info-email"
+              className="form-control col-6"
+              id="input-player"
               placeholder={placeHolder}
             />
           </div>
         </div>
         <small>
-          If you are unsure about your tag, choosing your region may be
+          If you are unsure about your tag, choosing the region may be
           sufficient.
         </small>
 
         <button
-          class="btn btn-secondary col-12 my-4"
-          type="button"
+          id="search-button"
+          className="btn btn-secondary col-12 my-4"
+          type="submit"
+          onClick={handleSearch}
+          onAnimationEnd={stopShake}
           data-bs-toggle="button"
           aria-pressed="false"
         >
           Search
         </button>
+        <small id="warning-message">{warningMessage}</small>
       </div>
     </div>
   );
