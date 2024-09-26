@@ -36,21 +36,6 @@ small {
   color: #585a5c;
 }
 
-/* Hide the first dropdown by default */
-#region1 {
-  display: none;
-}
-
-/* CSS class to hide the second dropdown */
-.hidden {
-  display: none;
-}
-
-/* Show the second dropdown when hovering back over the first */
-#region1:hover+#region2 {
-  display: inline-block;
-}
-
 #warning-message {
   display: none;
 }

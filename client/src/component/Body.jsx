@@ -1,33 +1,41 @@
 import { useState } from "react";
 import { region_list } from "../asset/var";
 
-function createList(content, idx) {
+// helper function of map() to generate options for region selection
+function createOptions(content, idx) {
   return (
+    // the form of value is <index of input list_default tag of the region
+    // index of input list is used to provide key for each option and will be used to update the default tag
+    // the default tag will be sent with post request if user doesn't provide a tag
     <option key={idx} value={idx.toString() + "_" + content.abbrWithNum}>
       {content.full}
     </option>
   );
 }
 
+// shake function for the button in case of invalid input provided.
 function stopShake() {
   document.getElementById("search-button").classList.remove("apply-shake");
 }
 
 function Body() {
-  const [placeHolder, setPlaceHolder] = useState("Player Name#NA1");
+  // states for hook
+  const [defaultTag, setDefaultTag] = useState("NA1");
   const [warningMessage, setWarningMessage] = useState(
     "Default warning message"
   );
 
-  function updatePlaceHolder() {
-    console.log(document.getElementById("region").value);
-
+  // update default tag per region based on user's selection
+  function updateDefaultTag() {
+    // fetch the index of selected region
     const idx = parseInt(document.getElementById("region").value.split("_")[0]);
 
-    setPlaceHolder("Player Name#" + region_list[idx].abbrWithNum);
+    setDefaultTag(region_list[idx].abbrWithNum);
   }
 
+  // response function for serach button
   function handleSearch() {
+    // fetch required elements
     const warningMessageTag = document.getElementById("warning-message");
     const searchButton = document.getElementById("search-button");
 
@@ -38,18 +46,22 @@ function Body() {
       .getElementById("input-player")
       .value.trim();
 
+    // invalid input case 1: both fields filled
     if (championInputValue && playerInputValue) {
-      setWarningMessage("Please fill out just one of the input fields.");
+      setWarningMessage("Please fill out only one of the input fields.");
       warningMessageTag.style.display = "inline";
       searchButton.classList.add("apply-shake");
+      // invalid input case 2: neither fields filled
     } else if (!championInputValue && !playerInputValue) {
       setWarningMessage("Please fill out at least one of the input fields.");
       warningMessageTag.style.display = "inline";
       searchButton.classList.add("apply-shake");
     } else {
-      // post request starts here
+      // valid case: one of fields filled
       setWarningMessage("Valid search, we will process your request shortly.");
       warningMessageTag.style.display = "inline";
+
+      // post request starts here
     }
   }
 
@@ -72,12 +84,12 @@ function Body() {
           <select
             id="region"
             name="region"
-            onChange={updatePlaceHolder}
+            onChange={updateDefaultTag}
             className="form-select"
             aria-label="Default select example"
             defaultValue="0_NA1"
           >
-            {region_list.map(createList)}
+            {region_list.map(createOptions)}
           </select>
         </div>
         <div className="col-xxl-9 col-lg-8 col-md-7">
@@ -85,7 +97,7 @@ function Body() {
             type="text"
             className="form-control col-6"
             id="input-player"
-            placeholder={placeHolder}
+            placeholder={"Player Name#" + defaultTag}
           />
         </div>
       </div>
