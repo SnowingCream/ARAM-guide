@@ -46,22 +46,41 @@ function Body() {
       .getElementById("input-player")
       .value.trim();
 
-    // invalid input case 1: both fields filled
+    const dataToSend = {};
+
+    // invalid case 1: both fields filled
     if (championInputValue && playerInputValue) {
       setWarningMessage("Please fill out only one of the input fields.");
       warningMessageTag.style.display = "inline";
       searchButton.classList.add("apply-shake");
-      // invalid input case 2: neither fields filled
+      // invalid case 2: neither fields filled
     } else if (!championInputValue && !playerInputValue) {
       setWarningMessage("Please fill out at least one of the input fields.");
       warningMessageTag.style.display = "inline";
       searchButton.classList.add("apply-shake");
-    } else {
-      // valid case: one of fields filled
-      setWarningMessage("Valid search, we will process your request shortly.");
+      // valid case 1: champion build search
+    } else if (championInputValue) {
+      setWarningMessage(
+        "Valid search, but champion build feature has not been implemented yet."
+      );
       warningMessageTag.style.display = "inline";
+      // valid case 2: player record search
+      // these 2 variables are sufficient for user search and match shistory serach.
+    } else {
+      // user has non-default tag
+      if (playerInputValue.includes("#")) {
+        dataToSend.name = playerInputValue.split("#")[0];
+        dataToSend.tag = playerInputValue.split("#")[1];
+        console.log("tag provided");
+      }
 
-      // post request starts here
+      // user has not provided a tag
+      else {
+        dataToSend.name = playerInputValue;
+        dataToSend.tag = defaultTag;
+        console.log("tag not provided");
+      }
+      console.log(dataToSend);
     }
   }
 
