@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { region_list } from "../asset/var";
+import axios from "axios";
+import { useEffect } from "react";
 
 // helper function of map() to generate options for region selection
 function createOptions(content, idx) {
@@ -19,6 +21,25 @@ function stopShake() {
 }
 
 function Body() {
+  const callRoot = async () => {
+    axios.get("/api").then((res) => console.log(res.data.test));
+  };
+  const callChampion = async () => {
+    axios.get("/api/champion").then((res) => console.log(res.data.test));
+  };
+  const callPlayer = async (data) => {
+    console.log("sending data: ", data);
+    axios.post("/api/player", data).then((res) => console.log(res.data));
+  };
+
+  // effect runs after DOM is rendered.
+  // test purpose now, once button is connetecd to the function this will be removed.
+  useEffect(() => {
+    // callRoot();
+    // callChampion();
+    // callPlayer();
+  }, []);
+
   // states for hook
   const [defaultTag, setDefaultTag] = useState("NA1");
   const [warningMessage, setWarningMessage] = useState(
@@ -81,6 +102,7 @@ function Body() {
         console.log("tag not provided");
       }
       console.log(dataToSend);
+      callPlayer(dataToSend);
     }
   }
 
