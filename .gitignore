@@ -23,3 +23,9 @@ client/node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# apiKey
+server/apiKey.txt
+
+# examples of api-returned json
+/json_example/*

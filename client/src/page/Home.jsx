@@ -2,6 +2,7 @@ import { useState } from "react";
 import { region_list } from "../asset/var";
 import axios from "axios";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // helper function of map() to generate options for region selection
 function createOptions(content, idx) {
@@ -21,6 +22,7 @@ function stopShake() {
 }
 
 function Body() {
+  const navigate = useNavigate();
   const callRoot = async () => {
     axios.get("/api").then((res) => console.log(res.data.test));
   };
@@ -29,7 +31,10 @@ function Body() {
   };
   const callPlayer = async (data) => {
     console.log("sending data: ", data);
-    axios.post("/api/player", data).then((res) => console.log(res.data));
+    axios.post("/api/player", data).then((res) => {
+      console.log(res.data);
+      navigate("/player", { state: res.data });
+    });
   };
 
   // effect runs after DOM is rendered.
