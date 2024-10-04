@@ -23,12 +23,14 @@ function stopShake() {
 
 function Body() {
   const navigate = useNavigate();
-  const callRoot = async () => {
-    axios.get("/api").then((res) => console.log(res.data.test));
-  };
-  const callChampion = async () => {
-    axios.get("/api/champion").then((res) => console.log(res.data.test));
-  };
+
+  // comeback later
+  // const callRoot = async () => {
+  //   axios.get("/api").then((res) => console.log(res.data.test));
+  // };
+  // const callChampion = async () => {
+  //   axios.get("/api/champion").then((res) => console.log(res.data.test));
+  // };
   const callPlayer = async (data) => {
     console.log("sending data: ", data);
     axios.post("/api/player", data).then((res) => {

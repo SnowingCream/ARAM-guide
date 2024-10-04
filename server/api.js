@@ -13,7 +13,6 @@ async function axiosGet(URL) {
                 "X-Riot-Token": apiKey
             }
         });
-
         // Extract a value from the first API call's response (e.g., `id`)
         const data = response.data;
 
@@ -58,7 +57,14 @@ router.post("/player", (req, res) => {
             }
             console.log('Third API call completed');
 
-            res.send(thirdResult)
+            res.send({
+                account: {
+                    userName: req.body.name,
+                    tag: req.body.tag,
+                    puuid: firstResult.puuid,
+                },
+                matchRecords: thirdResult
+            });
 
         } catch (error) {
             res.send(error.message)

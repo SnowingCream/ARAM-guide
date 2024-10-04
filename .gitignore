@@ -29,3 +29,10 @@ server/apiKey.txt
 
 # examples of api-returned json
 /json_example/*
+
+
+# images and json from data dragon
+/client/public/asset/img/*
+/client/src/asset/data_dragon/*
+
+
