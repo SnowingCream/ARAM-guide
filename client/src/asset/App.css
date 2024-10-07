@@ -68,3 +68,8 @@ small {
 .apply-shake {
   animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
 }
+
+/* disable red color for weekends*/
+.react-calendar__month-view__days__day--weekend {
+  color: inherit !important;
+}
