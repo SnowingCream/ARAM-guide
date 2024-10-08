@@ -1,9 +1,6 @@
 import { useLocation } from "react-router-dom";
-import React, { useState } from "react";
 import profileIcon from "../asset/data_dragon/profileicon.json";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
-import "../asset/App.css";
+import Calendar from "../component/Calendar.jsx";
 
 function Player() {
   // useLocation gives us access to the current location object
@@ -77,17 +74,9 @@ function Player() {
   const src_location =
     "asset/img/profileicon/" + profileIcon.data[userIconId].image.full;
 
-  const [value, setValue] = useState(new Date());
-
-  function onChange(nextValue) {
-    setValue(nextValue);
-  }
-
   return (
     <div>
       <h1>This is the Player page.</h1>
-      {/* Conditionally render the returned data */}
-      {console.log(location)}
       {dataFromApi ? (
         <div>
           <h2>
@@ -103,24 +92,8 @@ function Player() {
             ) / 100}
             %
           </p>
-          <Calendar
-            onChange={onChange}
-            value={value}
-            prev2Label={null}
-            next2Label={null}
-            calendarType="gregory"
-            tileContent={({ activeStartDate, date, view }) =>
-              view === "month" ? (
-                <p>
-                  {
-                    userData.dailyRecords.get(
-                      date.getMonth.toString() + " / " + date.getDate.toString()
-                    ).win
-                  }
-                </p>
-              ) : null
-            }
-          />
+          <Calendar userData={userData} />
+
           <h2>Data from Backend:</h2>
 
           {/* Display the returned data in a formatted way */}

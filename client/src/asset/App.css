@@ -73,3 +73,13 @@ small {
 .react-calendar__month-view__days__day--weekend {
   color: inherit !important;
 }
+
+.react-calendar__tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Center content horizontally */
+  justify-content: flex-start;
+  /* Align content to the top */
+  height: 65px !important;
+}
