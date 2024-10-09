@@ -1,4 +1,4 @@
-const region_list = [
+const regionList = [
     {
         full: "North America",
         abbr: "NA",
@@ -86,5 +86,19 @@ const region_list = [
     },
 ];
 
+const ICON_SIZE = 48;
 
-export { region_list };
+function round(value, digitAfterDecimal, percent = true) {
+
+
+    if (percent) {
+        return Math.round(value * (10 ** (digitAfterDecimal + 2))) / (10 ** digitAfterDecimal)
+    }
+    else {
+        return Math.round(value * (10 ** (digitAfterDecimal))) / (10 ** digitAfterDecimal)
+    }
+
+}
+
+
+export { regionList, ICON_SIZE, round };

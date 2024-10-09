@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import ImportedCalendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../asset/App.css";
+import { round } from "../asset/var.js";
 
 function Calendar(props) {
   const [value, setValue] = useState(new Date());
+  // const [view, setView] = useState("month");
+  // const [activeStartDate, setActiveStartDate] = useState(new Date());
 
   // map with key: keyDate, values: win and lose of the keyDate
   const dailyRecords = props.userData.dailyRecords;
@@ -19,19 +22,35 @@ function Calendar(props) {
     const win = dailyRecords.get(getKeyDate(date)).win;
     const lose = dailyRecords.get(getKeyDate(date)).lose;
 
-    return Math.round((win / (win + lose)) * 1000) / 10;
+    return round(win / (win + lose), 1);
   }
 
   function onChange(nextValue) {
     setValue(nextValue);
   }
 
+  const currentYear = new Date().getFullYear();
+  const minDate = new Date(currentYear, 0, 1); // January 1st of the current year
+  const maxDate = new Date(currentYear, 11, 31);
+
   return (
     <ImportedCalendar
       onChange={onChange}
+      // view={view}
       value={value}
       prev2Label={null}
       next2Label={null}
+      minDate={minDate}
+      maxDate={maxDate}
+      minDetail="month"
+      // activeStartDate={activeStartDate}
+      // onDrillDown={(date) => {
+      //   setView("month");
+      //   setActiveStartDate(date);
+      // }}
+      // onDrillUp={() => setView("year")}
+      // onDrillDown={console.log("or this")}
+      // maxDetail="month"
       calendarType="gregory"
       // if there is a record for the given day, show win, lose, and winning rate.
       tileContent={({ date, view }) =>

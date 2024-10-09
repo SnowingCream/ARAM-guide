@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import profileIcon from "../asset/data_dragon/profileicon.json";
 import Calendar from "../component/Calendar.jsx";
 import ChampionSummary from "../component/ChampionSummary.jsx";
+import { ICON_SIZE, round } from "../asset/var.js";
 
 function Player() {
   // useLocation gives us access to the current location object
@@ -106,46 +107,53 @@ function Player() {
     "asset/img/profileicon/" + profileIcon.data[userIconId].image.full;
 
   return (
-    <div>
-      <h1>This is the Player page.</h1>
+    <div className="container px-3 py-5 my-5 text-center">
       {dataFromApi ? (
-        <div>
-          <h2>
-            Records of : {dataFromApi.account.userName} #
-            {dataFromApi.account.tag}
-          </h2>
-          <img src={src_location} alt="profileIcon" />
+        <div className="valid-input">
+          <div className="user-info">
+            <h2>
+              {dataFromApi.account.userName} #{dataFromApi.account.tag}
+            </h2>
+            <img
+              src={src_location}
+              alt="profileIcon"
+              width={ICON_SIZE}
+              height={ICON_SIZE}
+            />
 
-          <p>
-            winning rate:{" "}
-            {Math.round(
-              (userData.win / dataFromApi.matchRecords.length) * 10000
-            ) / 100}
-            %
-          </p>
-          <Calendar userData={userData} />
-          <div class="card" style={{ width: "18rem" }}>
-            <ul class="list-group list-group-flush">
-              {userData.championRecords.forEach((key, value) => (
-                <ChampionSummary
-                  name={key}
-                  win={value.win}
-                  lose={value.lose}
-                  kill={value.kill}
-                  death={value.death}
-                  assist={value.assist}
-                />
-              ))}
-            </ul>
+            <p>
+              winning rate:
+              {round(userData.win / dataFromApi.matchRecords.length, 2)}%
+            </p>
           </div>
-
-          {/* <h2>Data from Backend:</h2>
-
-          Display the returned data in a formatted way
-          <pre>{JSON.stringify(dataFromApi, null, 2)}</pre> */}
+          <div className="summery-overview">
+            <div className="row">
+              <div className="overview-calendar col-md-6 justify-content-center">
+                <Calendar userData={userData} />
+              </div>
+              <div className="overview-champion col-md-6 overflow-auto">
+                {[...userData.championRecords.entries()].map(([key, value]) => (
+                  <ChampionSummary
+                    key={key} // Use the key from the map
+                    name={key}
+                    win={value.win}
+                    lose={value.lose}
+                    kill={value.kill}
+                    death={value.death}
+                    assist={value.assist}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="summary">
+            <p>Placeholder for game summary</p>
+          </div>
         </div>
       ) : (
-        <p>No data available</p>
+        <div className="invalid-input">
+          <p>No data available</p>
+        </div>
       )}
     </div>
   );

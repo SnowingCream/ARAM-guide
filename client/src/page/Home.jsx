@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { region_list } from "../asset/var";
+import { regionList } from "../asset/var";
 import axios from "axios";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -58,7 +58,7 @@ function Body() {
     // fetch the index of selected region
     const idx = parseInt(document.getElementById("region").value.split("_")[0]);
 
-    setDefaultTag(region_list[idx].abbrWithNum);
+    setDefaultTag(regionList[idx].abbrWithNum);
   }
 
   // response function for serach button
@@ -137,7 +137,7 @@ function Body() {
             aria-label="Default select example"
             defaultValue="0_NA1"
           >
-            {region_list.map(createOptions)}
+            {regionList.map(createOptions)}
           </select>
         </div>
         <div className="col-xxl-9 col-lg-8 col-md-7">

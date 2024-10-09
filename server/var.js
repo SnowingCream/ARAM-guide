@@ -6,7 +6,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // process.cwd() = current working directory
 // __dirname = directory of the current module
 
-const numMatches = 70;
+const numMatches = 80;
 
 const apiKey = fs.readFileSync(__dirname + "/apiKey.txt").toString().trim();
 
