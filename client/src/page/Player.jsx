@@ -3,6 +3,7 @@ import profileIcon from "../asset/data_dragon/profileicon.json";
 import Calendar from "../component/Calendar.jsx";
 import ChampionSummary from "../component/ChampionSummary.jsx";
 import { ICON_SIZE, round } from "../asset/var.js";
+import ChampionSummaryContainer from "../component/ChampionSummaryContainer.jsx";
 
 function Player() {
   // useLocation gives us access to the current location object
@@ -132,7 +133,7 @@ function Player() {
                 <Calendar userData={userData} />
               </div>
               <div className="overview-champion col-md-6 overflow-auto">
-                {[...userData.championRecords.entries()].map(([key, value]) => (
+                {/* {[...userData.championRecords.entries()].map(([key, value]) => (
                   <ChampionSummary
                     key={key} // Use the key from the map
                     name={key}
@@ -142,7 +143,8 @@ function Player() {
                     death={value.death}
                     assist={value.assist}
                   />
-                ))}
+                ))} */}
+                <ChampionSummaryContainer data={userData.championRecords} />
               </div>
             </div>
           </div>
