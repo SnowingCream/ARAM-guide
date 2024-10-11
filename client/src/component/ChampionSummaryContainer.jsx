@@ -24,12 +24,14 @@ function ChampionSummaryContainer(props) {
     }
   }
 
+  // initial sorting after all states are set.
   useEffect(() => {
     sortChampions("numberOfPlays");
     // don't touch the comment below! it is to remove the warning message.
     // eslint-disable-next-line
   }, []);
 
+  // sorting when the user presses buttons.
   useEffect(() => {
     // Skip sorting for the initial setup of states.
     if (isInitialRender.current) {

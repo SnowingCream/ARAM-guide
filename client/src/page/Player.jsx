@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom";
 import profileIcon from "../asset/data_dragon/profileicon.json";
 import Calendar from "../component/Calendar.jsx";
-import ChampionSummary from "../component/ChampionSummary.jsx";
 import { ICON_SIZE, round } from "../asset/var.js";
 import ChampionSummaryContainer from "../component/ChampionSummaryContainer.jsx";
 
@@ -12,8 +11,6 @@ function Player() {
   // Destructure 'returnedData' from location.state,
   // or fallback to an empty object if state is undefined.
   const dataFromApi = location.state || {};
-
-  // console.log(dataFromApi);
 
   // get a userIndex of the record of given index.
   function getUserindex(recordIdx) {
@@ -133,17 +130,6 @@ function Player() {
                 <Calendar userData={userData} />
               </div>
               <div className="overview-champion col-md-6 overflow-auto">
-                {/* {[...userData.championRecords.entries()].map(([key, value]) => (
-                  <ChampionSummary
-                    key={key} // Use the key from the map
-                    name={key}
-                    win={value.win}
-                    lose={value.lose}
-                    kill={value.kill}
-                    death={value.death}
-                    assist={value.assist}
-                  />
-                ))} */}
                 <ChampionSummaryContainer data={userData.championRecords} />
               </div>
             </div>
