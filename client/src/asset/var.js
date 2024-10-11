@@ -86,6 +86,21 @@ const regionList = [
     },
 ];
 
+const sortButtonList = [
+    {
+        id: "btnradio1",
+        criterion: "numberOfPlays"
+    },
+    {
+        id: "btnradio2",
+        criterion: "winningRate"
+    },
+    {
+        id: "btnradio3",
+        criterion: "KDA"
+    },
+];
+
 const ICON_SIZE = 48;
 
 function round(value, digitAfterDecimal, percent = true) {
@@ -101,4 +116,4 @@ function round(value, digitAfterDecimal, percent = true) {
 }
 
 
-export { regionList, ICON_SIZE, round };
+export { regionList, sortButtonList, ICON_SIZE, round };
