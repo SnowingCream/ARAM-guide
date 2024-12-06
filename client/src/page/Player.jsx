@@ -125,11 +125,11 @@ function Player() {
             </p>
           </div>
           <div className="summery-overview">
-            <div className="row">
-              <div className="overview-calendar col-md-6 justify-content-center">
+            <div className="row my-3">
+              <div className="d-flex overview-calendar col-md-6 mx-auto my-3">
                 <Calendar userData={userData} />
               </div>
-              <div className="overview-champion col-md-6 overflow-auto">
+              <div className=" d-flex overview-champion col-md-6 mx-auto overflow-auto my-3">
                 <ChampionSummaryContainer data={userData.championRecords} />
               </div>
             </div>

@@ -5,7 +5,6 @@ import { sortButtonList, round } from "../asset/var.js";
 
 function ChampionSummaryContainer(props) {
   const championArray = Array.from(props.data); // starting point: input map converted to array with each element: [key, value]
-
   const [sortedChampions, setSortedChampions] = useState([]); // ending point: the result of sort in which map() will be called upon, used for rendering the champion summary as well.
   const [sortCriterion, setSortCriterion] = useState("numberOfPlays"); // sorting criterion, used for updating the button as well.
   const [isDescending, setIsDescending] = useState(false); // sorting order condition, used for updating the sorting order icon as well.
@@ -37,7 +36,7 @@ function ChampionSummaryContainer(props) {
     if (isInitialRender.current) {
       isInitialRender.current = false;
     } else {
-      console.log(`triggered with isAscending: ${isDescending}`);
+      // console.log(`triggered with isAscending: ${isDescending}`);
 
       const sortedArray = championArray.sort((a, b) => {
         const championA = isDescending ? b[1] : a[1];
@@ -91,9 +90,9 @@ function ChampionSummaryContainer(props) {
   }, [sortCriterion, isDescending]);
 
   return (
-    <div>
+    <div className="mx-auto">
       <div
-        className="btn-group"
+        className="btn-group mb-3"
         role="group"
         aria-label="Basic radio toggle button group"
       >
@@ -102,6 +101,7 @@ function ChampionSummaryContainer(props) {
             key={data.id}
             id={data.id}
             criterion={data.criterion}
+            label={data.label}
             sortCriterion={sortCriterion}
             sortChampions={sortChampions}
             isDescending={isDescending}

@@ -89,15 +89,19 @@ const regionList = [
 const sortButtonList = [
     {
         id: "btnradio1",
-        criterion: "numberOfPlays"
+        criterion: "numberOfPlays",
+        label: "# Games",
+
     },
     {
         id: "btnradio2",
-        criterion: "winningRate"
+        criterion: "winningRate",
+        label: "Winning Rate",
     },
     {
         id: "btnradio3",
-        criterion: "KDA"
+        criterion: "KDA",
+        label: "KDA",
     },
 ];
 

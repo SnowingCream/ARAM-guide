@@ -35,6 +35,7 @@ function Calendar(props) {
 
   return (
     <ImportedCalendar
+      className="mx-auto"
       onChange={onChange}
       // view={view}
       value={value}

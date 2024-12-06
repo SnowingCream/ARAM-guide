@@ -14,7 +14,7 @@ function SortButton(props) {
         }}
       />
       <label className="btn btn-outline-secondary" htmlFor={props.id}>
-        # Games{" "}
+        {props.label}
         {props.sortCriterion === props.criterion &&
           (props.isDescending ? (
             <svg
