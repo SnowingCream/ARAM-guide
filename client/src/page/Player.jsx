@@ -142,6 +142,14 @@ function Player() {
         assist: dataFromApi.matchRecords[i].info.participants[j].assists,
         win: dataFromApi.matchRecords[i].info.participants[j].win,
         user: j === getUserindex(i),
+        spell1: dataFromApi.matchRecords[i].info.participants[j].summoner1Id,
+        spell2: dataFromApi.matchRecords[i].info.participants[j].summoner2Id,
+        primaryRune:
+          dataFromApi.matchRecords[i].info.participants[j].perks.styles[0]
+            .selections[0].perk,
+        secondaryRuneStyle:
+          dataFromApi.matchRecords[i].info.participants[j].perks.styles[1]
+            .style,
       };
       matchRecord.push(playerRecord);
     }
