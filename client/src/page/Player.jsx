@@ -3,6 +3,7 @@ import profileIcon from "../asset/data_dragon/profileicon.json";
 import Calendar from "../component/Calendar.jsx";
 import { ICON_SIZE, round } from "../asset/var.js";
 import ChampionSummaryContainer from "../component/ChampionSummaryContainer.jsx";
+import MatchSummaryContainer from "../component/MatchSummaryContainer.jsx";
 
 function Player() {
   // useLocation gives us access to the current location object
@@ -12,7 +13,7 @@ function Player() {
   // or fallback to an empty object if state is undefined.
   const dataFromApi = location.state || {};
 
-  // get a userIndex of the record of given index.
+  // get a userIndex of the game record of given index.
   function getUserindex(recordIdx) {
     return dataFromApi.matchRecords[recordIdx].metadata.participants.indexOf(
       dataFromApi.account.puuid
@@ -22,16 +23,25 @@ function Player() {
   // userIndex of first game to fetch the userIconId
   const userFirstIndex = getUserindex(0);
 
-  // used to render corresponding userIcon image
-  const userIconId =
-    dataFromApi.matchRecords[0].info.participants[
-      userFirstIndex
-    ].profileIcon.toString();
+  // object for user summary
+  const user = {
+    userName: dataFromApi.account.userName,
+    tag: dataFromApi.account.tag,
+    iconId:
+      dataFromApi.matchRecords[0].info.participants[
+        userFirstIndex
+      ].profileIcon.toString(),
+    level:
+      dataFromApi.matchRecords[0].info.participants[
+        userFirstIndex
+      ].summonerLevel.toString(),
+    win: 0,
+  };
 
   const userData = {
-    win: 0,
     dailyRecords: new Map(),
     championRecords: new Map(),
+    matchRecords: [],
   };
 
   for (let i = 0; i < dataFromApi.matchRecords.length; i++) {
@@ -49,17 +59,28 @@ function Player() {
       " / " +
       recordDate.getDate().toString();
 
-    // Wukong has different name Monkey King
-    const championName =
-      dataFromApi.matchRecords[i].info.participants[userIndex].championName ===
-      "Wukong"
-        ? "MonkeyKing"
-        : dataFromApi.matchRecords[i].info.participants[userIndex].championName;
+    function checkChampionName(championName) {
+      // Wukong has a different name: Monkey King
+      if (championName === "Wukong") {
+        return "MonkeyKing";
+      }
+      // The image file has a name  Fiddlesticks (lower s).
+      if (championName === "FiddleSticks") {
+        return "Fiddlesticks";
+      }
+      return championName;
+    }
+
+    const userChampionName = checkChampionName(
+      dataFromApi.matchRecords[i].info.participants[userIndex].championName
+    );
 
     // total win accumulation for given records.
     if (userWin) {
-      userData.win += 1;
+      user.win += 1;
     }
+
+    /// ---------------------- userData.dailyRecords setup ------------------
 
     // if the date is already key, add win or lose accordingly to that existing key-value pair.
     if (userData.dailyRecords.has(mapKeyDate)) {
@@ -75,21 +96,23 @@ function Player() {
       });
     }
 
-    // if the champion ID is already key, add win or lose and k, d, a accordingly to that existing key-value pair.
-    if (userData.championRecords.has(championName)) {
-      userWin
-        ? (userData.championRecords.get(championName).win += 1)
-        : (userData.championRecords.get(championName).lose += 1);
+    /// ---------------------- userData.championRecords setup ------------------
 
-      userData.championRecords.get(championName).kill +=
+    // if the champion ID is already key, add win or lose and k, d, a accordingly to that existing key-value pair.
+    if (userData.championRecords.has(userChampionName)) {
+      userWin
+        ? (userData.championRecords.get(userChampionName).win += 1)
+        : (userData.championRecords.get(userChampionName).lose += 1);
+
+      userData.championRecords.get(userChampionName).kill +=
         dataFromApi.matchRecords[i].info.participants[userIndex].kills;
-      userData.championRecords.get(championName).death +=
+      userData.championRecords.get(userChampionName).death +=
         dataFromApi.matchRecords[i].info.participants[userIndex].deaths;
-      userData.championRecords.get(championName).assist +=
+      userData.championRecords.get(userChampionName).assist +=
         dataFromApi.matchRecords[i].info.participants[userIndex].assists;
       // if the champion ID has not been the key yet, create a new key-value with according initial value.
     } else {
-      userData.championRecords.set(championName, {
+      userData.championRecords.set(userChampionName, {
         win: userWin ? 1 : 0,
         lose: userWin ? 0 : 1,
         kill: dataFromApi.matchRecords[i].info.participants[userIndex].kills,
@@ -98,11 +121,36 @@ function Player() {
           dataFromApi.matchRecords[i].info.participants[userIndex].assists,
       });
     }
+
+    /// ---------------------- userData.matchRecords setup ------------------
+
+    // container of a single match
+    const matchRecord = [];
+
+    // each player's record in that match
+    for (let j = 0; j < 10; j++) {
+      const playerRecord = {
+        userName:
+          dataFromApi.matchRecords[i].info.participants[j].riotIdGameName,
+        tag: dataFromApi.matchRecords[i].info.participants[j].riotIdTagline,
+        level: dataFromApi.matchRecords[i].info.participants[j].summonerLevel,
+        champion: checkChampionName(
+          dataFromApi.matchRecords[i].info.participants[j].championName
+        ),
+        kill: dataFromApi.matchRecords[i].info.participants[j].kills,
+        death: dataFromApi.matchRecords[i].info.participants[j].deaths,
+        assist: dataFromApi.matchRecords[i].info.participants[j].assists,
+        win: dataFromApi.matchRecords[i].info.participants[j].win,
+        user: j === getUserindex(i),
+      };
+      matchRecord.push(playerRecord);
+    }
+    userData.matchRecords.push(matchRecord);
   }
 
   // img placed in public!
   const src_location =
-    "asset/img/profileicon/" + profileIcon.data[userIconId].image.full;
+    "asset/img/profileicon/" + profileIcon.data[user.iconId].image.full;
 
   return (
     <div className="container px-3 py-5 my-5 text-center">
@@ -110,7 +158,7 @@ function Player() {
         <div className="valid-input">
           <div className="user-info">
             <h2>
-              {dataFromApi.account.userName} #{dataFromApi.account.tag}
+              {user.userName} #{user.tag}
             </h2>
             <img
               src={src_location}
@@ -120,22 +168,22 @@ function Player() {
             />
 
             <p>
-              winning rate:
-              {round(userData.win / dataFromApi.matchRecords.length, 2)}%
+              level: {user.level} <br /> winning rate:
+              {round(user.win / dataFromApi.matchRecords.length, 2)}%
             </p>
           </div>
           <div className="summery-overview">
             <div className="row my-3">
               <div className="d-flex overview-calendar col-md-6 mx-auto my-3">
-                <Calendar userData={userData} />
+                <Calendar data={userData.dailyRecords} />
               </div>
-              <div className=" d-flex overview-champion col-md-6 mx-auto overflow-auto my-3">
+              <div className="d-flex overview-champion col-md-6 mx-auto overflow-auto my-3">
                 <ChampionSummaryContainer data={userData.championRecords} />
               </div>
             </div>
           </div>
-          <div className="summary">
-            <p>Placeholder for game summary</p>
+          <div className="d-flex overview-match col-md-6 mx-auto overflow-auto my-3">
+            <MatchSummaryContainer data={userData.matchRecords} />
           </div>
         </div>
       ) : (

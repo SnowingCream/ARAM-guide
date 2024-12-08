@@ -2,11 +2,9 @@ import champion from "../asset/data_dragon/champion.json";
 import { ICON_SIZE, round } from "../asset/var.js";
 
 function ChampionSummary(props) {
-  // in the case for Fiddlesticks, props.name is FiddleSticks but the png name is Fiddlesticks (no capital s)
   const src_location =
-    props.name === "FiddleSticks"
-      ? "asset/img/champion/" + champion.data["Fiddlesticks"].image.full
-      : "asset/img/champion/" + champion.data[props.name].image.full;
+    "asset/img/champion/" + champion.data[props.name].image.full;
+
   return (
     <div className="row">
       <img

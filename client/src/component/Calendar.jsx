@@ -10,7 +10,7 @@ function Calendar(props) {
   // const [activeStartDate, setActiveStartDate] = useState(new Date());
 
   // map with key: keyDate, values: win and lose of the keyDate
-  const dailyRecords = props.userData.dailyRecords;
+  const dailyRecords = props.data;
 
   // extract keyDate from date object
   function getKeyDate(date) {

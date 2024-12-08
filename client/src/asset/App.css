@@ -30,7 +30,6 @@
   overflow: scroll;
 }
 
-
 small {
   font-weight: 400;
   color: #585a5c;
@@ -42,7 +41,6 @@ small {
 
 /* Standard syntax */
 @keyframes shake {
-
   10%,
   90% {
     transform: translate3d(-1px, 0, 0);
@@ -66,7 +64,7 @@ small {
 }
 
 .apply-shake {
-  animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 /* disable red color for weekends*/
@@ -88,11 +86,14 @@ small {
   height: 500px;
 }
 
+.overview-match {
+  height: 1000px;
+}
+
 .champion-img {
   width: 48px;
   height: 48px;
   padding: 0;
-
 }
 
 #num-games {
