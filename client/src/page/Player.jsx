@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import profileIcon from "../asset/data_dragon/profileicon.json";
 import Calendar from "../component/Calendar.jsx";
-import { ICON_SIZE, round } from "../asset/var.js";
+import { ICON_SIZE_BIG, round } from "../asset/var.js";
 import ChampionSummaryContainer from "../component/ChampionSummaryContainer.jsx";
 import MatchSummaryContainer from "../component/MatchSummaryContainer.jsx";
 
@@ -124,8 +124,13 @@ function Player() {
 
     /// ---------------------- userData.matchRecords setup ------------------
 
+    const matchRecord = {};
+
+    matchRecord.gameDuration = dataFromApi.matchRecords[i].info.gameDuration;
+    matchRecord.gameStart = dataFromApi.matchRecords[i].info.gameStartTimestamp;
+
     // container of a single match
-    const matchRecord = [];
+    const playerRecords = [];
 
     // each player's record in that match
     for (let j = 0; j < 10; j++) {
@@ -151,8 +156,10 @@ function Player() {
           dataFromApi.matchRecords[i].info.participants[j].perks.styles[1]
             .style,
       };
-      matchRecord.push(playerRecord);
+      playerRecords.push(playerRecord);
     }
+
+    matchRecord.playerRecords = playerRecords;
     userData.matchRecords.push(matchRecord);
   }
 
@@ -171,8 +178,8 @@ function Player() {
             <img
               src={src_location}
               alt="profileIcon"
-              width={ICON_SIZE}
-              height={ICON_SIZE}
+              width={ICON_SIZE_BIG}
+              height={ICON_SIZE_BIG}
             />
 
             <p>

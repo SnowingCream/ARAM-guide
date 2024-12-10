@@ -6,8 +6,8 @@ function MatchSummaryContainer(props) {
   return (
     <div>
       <p>placeholder: will be necessary for implementing filter</p>
-      {matchList.map((data) => (
-        <MatchSummary data={data} />
+      {matchList.map((data, index) => (
+        <MatchSummary data={data} key={index} />
       ))}
     </div>
   );

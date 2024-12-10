@@ -1,11 +1,14 @@
 import champion from "../asset/data_dragon/champion.json";
 import rune from "../asset/data_dragon/runesReforged.json";
-import { ICON_SIZE, round } from "../asset/var.js";
+import spell from "../asset/data_dragon/summoner.json";
+import { ICON_SIZE_BIG, ICON_SIZE_SMALL, round } from "../asset/var.js";
 
 function MatchSummary(props) {
   const match = props.data;
 
-  const champion_location_front = "asset/img/champion/";
+  const championLocationFront = "asset/img/champion/";
+  const runeLocationFront = "asset/img/";
+  const spellLocationFront = "asset/img/spell/";
 
   const teamWin = [];
   const teamLose = [];
@@ -24,39 +27,105 @@ function MatchSummary(props) {
 
   const user = match[userIndex];
 
-  function findSpellLocation(code) {
-    const rune_location_front = "asset/img/";
-
-    for (let i = 0; i < rune.length; i++) {
-      if (code === rune[i].id) {
-        console.log(`found the match: ${rune_location_front + rune[i].icon}`);
-        return rune_location_front + rune[i].icon;
+  function getSpellLocation(code, spellLocationFront) {
+    for (let spellName in spell.data) {
+      // console.log(spellName);
+      if (code.toString() === spell.data[spellName].key) {
+        return spellLocationFront + spell.data[spellName].image.full;
       }
     }
 
-    console.log("Failed to find any match");
+    console.log(`Failed to find any spell match with given code: ${code}`);
+  }
+
+  function getPrimaryRuneLocation(code, runeLocationFront) {
+    // Hail of Blades -> doesn't follow the logic below (exception)
+    if (code === 9923) {
+      return (
+        runeLocationFront +
+        "perk-images/Styles/Domination/HailOfBlades/HailOfBlades.png"
+      );
+    }
+
+    const codeId = Math.floor(code / 100) * 100;
+
+    for (let i = 0; i < rune.length; i++) {
+      if (codeId === rune[i].id) {
+        for (let j = 0; j < rune[i].slots[0].runes.length; j++) {
+          if (code === rune[i].slots[0].runes[j].id) {
+            return runeLocationFront + rune[i].slots[0].runes[j].icon;
+          }
+        }
+      }
+    }
+    console.log(
+      `Failed to find any primary rune match with given code: ${code}`
+    );
+  }
+
+  function getSecondRuneStyleLocation(code, runeLocationFront) {
+    for (let i = 0; i < rune.length; i++) {
+      if (code === rune[i].id) {
+        return runeLocationFront + rune[i].icon;
+      }
+    }
+    console.log(
+      `Failed to find any secondary rune style match with given code: ${code}`
+    );
   }
 
   return (
     // update color in the future
     <div className={`row ${user.win ? "bg-primary" : "bg-danger"}`}>
-      <img
-        className="champion-img col-2"
-        src={champion_location_front + champion.data[user.champion].image.full}
-        width={ICON_SIZE}
-        height={ICON_SIZE}
-        alt="..."
-      />
+      <div className="col-2">
+        <img
+          className="champion-img "
+          src={championLocationFront + champion.data[user.champion].image.full}
+          width={ICON_SIZE_BIG}
+          height={ICON_SIZE_BIG}
+          alt="..."
+        />
+      </div>
+      <div className="col-4">
+        <div className="row">
+          <img
+            className="rune-spell-img col-6"
+            src={getPrimaryRuneLocation(user.primaryRune, runeLocationFront)}
+            width={ICON_SIZE_SMALL}
+            height={ICON_SIZE_SMALL}
+            alt="..."
+          />
+          <img
+            className="rune-spell-img col-6"
+            src={getSecondRuneStyleLocation(
+              user.secondaryRuneStyle,
+              runeLocationFront
+            )}
+            width={ICON_SIZE_SMALL}
+            height={ICON_SIZE_SMALL}
+            alt="..."
+          />
+        </div>
+        <div className="row">
+          <img
+            className="rune-spell-img col-6"
+            src={getSpellLocation(user.spell1, spellLocationFront)}
+            width={ICON_SIZE_SMALL}
+            height={ICON_SIZE_SMALL}
+            alt="..."
+          />
 
-      <img
-        className="champion-img col-2"
-        src={findSpellLocation(user.primaryRune)}
-        width={ICON_SIZE}
-        height={ICON_SIZE}
-        alt="..."
-      />
+          <img
+            className="rune-spell-img col-6"
+            src={getSpellLocation(user.spell2, spellLocationFront)}
+            width={ICON_SIZE_SMALL}
+            height={ICON_SIZE_SMALL}
+            alt="..."
+          />
+        </div>
+      </div>
 
-      <p className="col-5">
+      <p className="col">
         <span>{user.kill}</span>
         &nbsp;/&nbsp;
         <span style={{ color: "maroon" }}>{user.death}</span>

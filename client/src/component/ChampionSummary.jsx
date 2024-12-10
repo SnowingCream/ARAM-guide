@@ -1,5 +1,5 @@
 import champion from "../asset/data_dragon/champion.json";
-import { ICON_SIZE, round } from "../asset/var.js";
+import { ICON_SIZE_BIG, round } from "../asset/var.js";
 
 function ChampionSummary(props) {
   const src_location =
@@ -11,8 +11,8 @@ function ChampionSummary(props) {
         className="champion-img col-2"
         src={src_location}
         alt="..."
-        width={ICON_SIZE}
-        height={ICON_SIZE}
+        width={ICON_SIZE_BIG}
+        height={ICON_SIZE_BIG}
       />
 
       <span className="col-3" id="num-games">
