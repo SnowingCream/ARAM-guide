@@ -6,7 +6,7 @@ function ChampionSummary(props) {
     "asset/img/champion/" + champion.data[props.name].image.full;
 
   return (
-    <div className="row">
+    <div className="row champion-summary-container align-items-center justify-content-center">
       <img
         className="champion-img col-2"
         src={src_location}
@@ -15,18 +15,18 @@ function ChampionSummary(props) {
         height={ICON_SIZE_BIG}
       />
 
-      <span className="col-3" id="num-games">
+      <span className="col-3 mb-0" id="num-games">
         {props.win + props.lose} Games
       </span>
 
-      <p className="col-2">
+      <p className="col-2 mb-0">
         <span style={{ color: "blue" }}>{props.win}</span>
         &nbsp;/&nbsp;
         <span style={{ color: "red" }}>{props.lose}</span>
         <br />
         {round(props.win / (props.win + props.lose), 1)}%
       </p>
-      <p className="col-5">
+      <p className="col-5 mb-0">
         <span>{round(props.kill / (props.win + props.lose), 1, false)}</span>
         &nbsp;/&nbsp;
         <span style={{ color: "maroon" }}>

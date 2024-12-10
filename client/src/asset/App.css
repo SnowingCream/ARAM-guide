@@ -96,10 +96,24 @@ small {
   padding: 0;
 }
 
+.match-summary-champion-img-container {
+  padding-left: 0;
+}
+
 .rune-spell-img {
   width: 24px;
   height: 24px;
   padding: 0;
+}
+
+.match-time {
+  width: 98px !important;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.champion-summary-container {
+  height: 64px;
 }
 
 #num-games {

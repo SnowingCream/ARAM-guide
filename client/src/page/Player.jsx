@@ -126,8 +126,8 @@ function Player() {
 
     const matchRecord = {};
 
-    matchRecord.gameDuration = dataFromApi.matchRecords[i].info.gameDuration;
     matchRecord.gameStart = dataFromApi.matchRecords[i].info.gameStartTimestamp;
+    matchRecord.gameDuration = dataFromApi.matchRecords[i].info.gameDuration;
 
     // container of a single match
     const playerRecords = [];
@@ -155,6 +155,9 @@ function Player() {
         secondaryRuneStyle:
           dataFromApi.matchRecords[i].info.participants[j].perks.styles[1]
             .style,
+        earlySurrendered:
+          dataFromApi.matchRecords[i].info.participants[j].teamEarlySurrendered,
+        // timePlayed: dataFromApi.matchRecords[i].info.participants[j].timePlayed,
       };
       playerRecords.push(playerRecord);
     }
@@ -187,18 +190,20 @@ function Player() {
               {round(user.win / dataFromApi.matchRecords.length, 2)}%
             </p>
           </div>
-          <div className="summery-overview">
-            <div className="row my-3">
-              <div className="d-flex overview-calendar col-md-6 mx-auto my-3">
-                <Calendar data={userData.dailyRecords} />
-              </div>
-              <div className="d-flex overview-champion col-md-6 mx-auto overflow-auto my-3">
-                <ChampionSummaryContainer data={userData.championRecords} />
-              </div>
+          {/* <div className="summary-overview"> */}
+          <div className="row my-3">
+            <div className="d-flex overview-calendar col-md-6 mx-auto my-3">
+              <Calendar data={userData.dailyRecords} />
+            </div>
+            <div className="d-flex overview-champion col-md-6 mx-auto overflow-auto my-3">
+              <ChampionSummaryContainer data={userData.championRecords} />
             </div>
           </div>
-          <div className="d-flex overview-match col-md-6 mx-auto overflow-auto my-3">
-            <MatchSummaryContainer data={userData.matchRecords} />
+          {/* </div> */}
+          <div className="row my-3 justify-content-center">
+            <div className="col-md-6">
+              <MatchSummaryContainer data={userData.matchRecords} />
+            </div>
           </div>
         </div>
       ) : (
