@@ -1,3 +1,8 @@
+import champion from "./data_dragon/champion.json";
+import spell from "../asset/data_dragon/summoner.json";
+import rune from "../asset/data_dragon/runesReforged.json";
+// import item from "../asset/data_dragon/item.json";
+
 const regionList = [
   {
     full: "North America",
@@ -121,4 +126,83 @@ function round(value, digitAfterDecimal, percent = true) {
   }
 }
 
-export { regionList, sortButtonList, ICON_SIZE_BIG, ICON_SIZE_SMALL, round };
+// functions below work based on the assumption that the location of file that imports these are under components folder (direct child of it)
+
+function getChampionImageLocation(championName) {
+  const championImageLocationFront = "asset/img/champion/";
+
+  return championImageLocationFront + champion.data[championName].image.full;
+}
+
+function getSpellImageLocation(code) {
+  const spellLocationFront = "asset/img/spell/";
+
+  for (let spellName in spell.data) {
+    // console.log(spellName);
+    if (code.toString() === spell.data[spellName].key) {
+      return spellLocationFront + spell.data[spellName].image.full;
+    }
+  }
+
+  // console.log(`Failed to find any spell match with given code: ${code}`);
+}
+
+function getPrimaryRuneImageLocation(code) {
+  const runeLocationFront = "asset/img/";
+  // Hail of Blades -> doesn't follow the logic below (exception)
+  if (code === 9923) {
+    return (
+      runeLocationFront +
+      "perk-images/Styles/Domination/HailOfBlades/HailOfBlades.png"
+    );
+  }
+
+  // ~~ stands for Math.floor
+  const codeId = ~~(code / 100) * 100;
+
+  for (let i = 0; i < rune.length; i++) {
+    if (codeId === rune[i].id) {
+      for (let j = 0; j < rune[i].slots[0].runes.length; j++) {
+        if (code === rune[i].slots[0].runes[j].id) {
+          return runeLocationFront + rune[i].slots[0].runes[j].icon;
+        }
+      }
+    }
+  }
+  console.log(`Failed to find any primary rune match with given code: ${code}`);
+}
+
+function getSecondRuneStyleImageLocation(code) {
+  const runeLocationFront = "asset/img/";
+
+  for (let i = 0; i < rune.length; i++) {
+    if (code === rune[i].id) {
+      return runeLocationFront + rune[i].icon;
+    }
+  }
+  console.log(
+    `Failed to find any secondary rune style match with given code: ${code}`
+  );
+}
+
+// fast track? if finds error go back to the traditional way using json
+function getItemImageLocation(code) {
+  if (code === 0) {
+    return null;
+  }
+
+  return `asset/img/item/${code}.png`;
+}
+
+export {
+  regionList,
+  sortButtonList,
+  ICON_SIZE_BIG,
+  ICON_SIZE_SMALL,
+  round,
+  getChampionImageLocation,
+  getSpellImageLocation,
+  getPrimaryRuneImageLocation,
+  getSecondRuneStyleImageLocation,
+  getItemImageLocation,
+};

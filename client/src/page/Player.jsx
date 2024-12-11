@@ -157,7 +157,14 @@ function Player() {
             .style,
         earlySurrendered:
           dataFromApi.matchRecords[i].info.participants[j].teamEarlySurrendered,
-        // timePlayed: dataFromApi.matchRecords[i].info.participants[j].timePlayed,
+        items: [
+          dataFromApi.matchRecords[i].info.participants[j].item0,
+          dataFromApi.matchRecords[i].info.participants[j].item1,
+          dataFromApi.matchRecords[i].info.participants[j].item2,
+          dataFromApi.matchRecords[i].info.participants[j].item3,
+          dataFromApi.matchRecords[i].info.participants[j].item4,
+          dataFromApi.matchRecords[i].info.participants[j].item5,
+        ],
       };
       playerRecords.push(playerRecord);
     }
@@ -199,9 +206,8 @@ function Player() {
               <ChampionSummaryContainer data={userData.championRecords} />
             </div>
           </div>
-          {/* </div> */}
           <div className="row my-3 justify-content-center">
-            <div className="col-md-6">
+            <div className="col-md-12">
               <MatchSummaryContainer data={userData.matchRecords} />
             </div>
           </div>

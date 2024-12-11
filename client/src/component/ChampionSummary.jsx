@@ -1,15 +1,15 @@
-import champion from "../asset/data_dragon/champion.json";
-import { ICON_SIZE_BIG, round } from "../asset/var.js";
+import {
+  ICON_SIZE_BIG,
+  round,
+  getChampionImageLocation,
+} from "../asset/var.js";
 
 function ChampionSummary(props) {
-  const src_location =
-    "asset/img/champion/" + champion.data[props.name].image.full;
-
   return (
     <div className="row champion-summary-container align-items-center justify-content-center">
       <img
         className="champion-img col-2"
-        src={src_location}
+        src={getChampionImageLocation(props.name)}
         alt="..."
         width={ICON_SIZE_BIG}
         height={ICON_SIZE_BIG}
