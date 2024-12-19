@@ -14,7 +14,7 @@ function MatchDetail(props) {
 
   return (
     <div className="row align-items-center justify-content-center">
-      <div className="col-3">
+      <div className="col-2">
         <img
           className=" champion-img"
           src={getChampionImageLocation(player.champion)}
@@ -23,7 +23,7 @@ function MatchDetail(props) {
           alt="..."
         />
       </div>
-      <div className="col-5">
+      <div className="col-2">
         <div className="row">
           <img
             className="rune-spell-img col-6"
@@ -59,9 +59,9 @@ function MatchDetail(props) {
         </div>
       </div>
 
-      <p className="col"> {`${player.userName} #${player.tag}`}</p>
+      <p className="col-2"> {`${player.userName} #${player.tag}`}</p>
 
-      <div className="col-2">
+      <div className="col-3">
         {player.items.map((code) =>
           code !== 0 ? (
             <img
@@ -75,7 +75,7 @@ function MatchDetail(props) {
         )}
       </div>
 
-      <p className="col-4 mb-0">
+      <p className="col-3 mb-0">
         <span>{player.kill}</span>
         &nbsp;/&nbsp;
         <span style={{ color: "maroon" }}>{player.death}</span>
