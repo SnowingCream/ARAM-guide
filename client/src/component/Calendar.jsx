@@ -30,7 +30,7 @@ function Calendar(props) {
   }
 
   const currentYear = new Date().getFullYear();
-  const minDate = new Date(currentYear, 0, 1); // January 1st of the current year
+  const minDate = new Date(currentYear - 1, 0, 1); // January 1st of the current year
   const maxDate = new Date(currentYear, 11, 31);
 
   return (
