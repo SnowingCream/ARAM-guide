@@ -13,7 +13,7 @@ function MatchDetail(props) {
   const player = props.data;
 
   return (
-    <div className="row align-items-center justify-content-center">
+    <div className="row align-items-center justify-content-center my-2">
       <div className="col-2">
         <img
           className=" champion-img"
@@ -59,20 +59,25 @@ function MatchDetail(props) {
         </div>
       </div>
 
-      <p className="col-2"> {`${player.userName} #${player.tag}`}</p>
-
-      <div className="col-3">
-        {player.items.map((code) =>
-          code !== 0 ? (
-            <img
-              className="item-img"
-              src={getItemImageLocation(code)}
-              width={ICON_SIZE_SMALL}
-              height={ICON_SIZE_SMALL}
-              alt="..."
-            />
-          ) : null
-        )}
+      <div className="col-5">
+        <div className="row">
+          <p className="mb-0">{`${player.userName} #${player.tag}`}</p>
+        </div>
+        <div className="row">
+          <div className="col">
+            {player.items.map((code) =>
+              code !== 0 ? (
+                <img
+                  className="item-img"
+                  src={getItemImageLocation(code)}
+                  width={ICON_SIZE_SMALL}
+                  height={ICON_SIZE_SMALL}
+                  alt="..."
+                />
+              ) : null
+            )}
+          </div>
+        </div>
       </div>
 
       <p className="col-3 mb-0">

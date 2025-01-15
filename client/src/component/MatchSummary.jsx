@@ -6,6 +6,7 @@ import {
   getSpellImageLocation,
   getPrimaryRuneImageLocation,
   getSecondRuneStyleImageLocation,
+  getItemImageLocation,
 } from "../asset/var.js";
 import React, { useState } from "react";
 import MatchDetailContainer from "./MatchDetailContainer.jsx";
@@ -124,6 +125,24 @@ function MatchSummary(props) {
               height={ICON_SIZE_SMALL}
               alt="..."
             />
+          </div>
+        </div>
+
+        <div className="col-2 d-flex align-items-center justify-content-center">
+          <div className="row item-grid">
+            {user.items.map((code) =>
+              code !== 0 ? (
+                <div key={code.index} className="col-4 px-0">
+                  <img
+                    className="item-img"
+                    src={getItemImageLocation(code)}
+                    width={ICON_SIZE_SMALL}
+                    height={ICON_SIZE_SMALL}
+                    alt="..."
+                  />
+                </div>
+              ) : null
+            )}
           </div>
         </div>
 

@@ -126,6 +126,10 @@ small {
   margin-bottom: 0.5rem;
 }
 
+.item-grid {
+  width: 72px;
+}
+
 /* 
 .btn-group {
   position:
