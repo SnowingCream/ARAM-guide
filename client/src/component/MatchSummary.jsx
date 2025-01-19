@@ -75,7 +75,6 @@ function MatchSummary(props) {
         className={`row py-1 align-items-center justify-content-center ${
           user.win ? "bg-primary" : "bg-danger"
         }`}
-        onClick={getMatchDetail}
       >
         <p className="col-4 mb-0 match-time">
           <span>{formatGameStart(matchRecord.gameStart)}</span>
@@ -146,7 +145,7 @@ function MatchSummary(props) {
           </div>
         </div>
 
-        <p className="col-4 mb-0">
+        <p className="col-3 mb-0">
           <span>{user.kill}</span>
           &nbsp;/&nbsp;
           <span style={{ color: "maroon" }}>{user.death}</span>
@@ -156,6 +155,9 @@ function MatchSummary(props) {
           KDA:&nbsp;
           {round((user.kill + user.assist) / user.death, 2, false)}
         </p>
+        <button className="col-1 btn rounded-pill" onClick={getMatchDetail}>
+          <p className="mb-0">Details</p>
+        </button>
       </div>
       {isMatchDetailVisible && (
         <MatchDetailContainer win={teamWin} lose={teamLose} />

@@ -9,7 +9,7 @@ import {
   getItemImageLocation,
 } from "../asset/var.js";
 
-function MatchDetail(props) {
+function MatchDetailOverview(props) {
   const player = props.data;
 
   return (
@@ -94,4 +94,4 @@ function MatchDetail(props) {
   );
 }
 
-export default MatchDetail;
+export default MatchDetailOverview;
