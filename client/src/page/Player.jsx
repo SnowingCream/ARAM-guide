@@ -165,6 +165,37 @@ function Player() {
           dataFromApi.matchRecords[i].info.participants[j].item4,
           dataFromApi.matchRecords[i].info.participants[j].item5,
         ],
+        gold: dataFromApi.matchRecords[i].info.participants[j].goldEarned,
+        cs: dataFromApi.matchRecords[i].info.participants[j].totalMinionsKilled,
+        totalDamage:
+          dataFromApi.matchRecords[i].info.participants[j]
+            .totalDamageDealtToChampions,
+        physicalDamage:
+          dataFromApi.matchRecords[i].info.participants[j]
+            .physicalDamageDealtToChampions,
+        magicDamage:
+          dataFromApi.matchRecords[i].info.participants[j]
+            .magicDamageDealtToChampions,
+        trueDamage:
+          dataFromApi.matchRecords[i].info.participants[j]
+            .trueDamageDealtToChampions,
+        damaged:
+          dataFromApi.matchRecords[i].info.participants[j].totalDamageTaken,
+        mitigated:
+          dataFromApi.matchRecords[i].info.participants[j].damageSelfMitigated,
+        selfHealed:
+          dataFromApi.matchRecords[i].info.participants[j].totalHeal -
+          dataFromApi.matchRecords[i].info.participants[j]
+            .totalHealsOnTeammates,
+        teamHeal:
+          dataFromApi.matchRecords[i].info.participants[j]
+            .totalHealsOnTeammates,
+        teamShield:
+          dataFromApi.matchRecords[i].info.participants[j]
+            .totalDamageShieldedOnTeammates,
+        ccTo: dataFromApi.matchRecords[i].info.participants[j].timeCCingOthers,
+        ccFrom:
+          dataFromApi.matchRecords[i].info.participants[j].totalTimeCCDealt,
       };
       playerRecords.push(playerRecord);
     }
