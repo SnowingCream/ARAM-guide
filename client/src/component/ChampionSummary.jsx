@@ -1,8 +1,4 @@
-import {
-  ICON_SIZE_BIG,
-  round,
-  getChampionImageLocation,
-} from "../asset/var.js";
+import { round, getChampionImageLocation } from "../asset/var.js";
 
 function ChampionSummary(props) {
   return (
@@ -10,9 +6,7 @@ function ChampionSummary(props) {
       <img
         className="champion-img col-2"
         src={getChampionImageLocation(props.name)}
-        alt="..."
-        width={ICON_SIZE_BIG}
-        height={ICON_SIZE_BIG}
+        alt="champion"
       />
 
       <span className="col-3 mb-0" id="num-games">

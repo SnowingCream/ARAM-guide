@@ -1,6 +1,4 @@
 import {
-  ICON_SIZE_BIG,
-  ICON_SIZE_SMALL,
   round,
   getChampionImageLocation,
   getPrimaryRuneImageLocation,
@@ -18,43 +16,33 @@ function MatchDetailOverview(props) {
         <img
           className=" champion-img"
           src={getChampionImageLocation(player.champion)}
-          width={ICON_SIZE_BIG}
-          height={ICON_SIZE_BIG}
-          alt="..."
+          alt="champion"
         />
       </div>
       <div className="col-2">
         <div className="row">
           <img
-            className="rune-spell-img col-6"
+            className="rune-spell-img-small col-6"
             src={getPrimaryRuneImageLocation(player.primaryRune)}
-            width={ICON_SIZE_SMALL}
-            height={ICON_SIZE_SMALL}
-            alt="..."
+            alt="primary rune"
           />
           <img
-            className="rune-spell-img col-6"
+            className="rune-spell-img-small col-6"
             src={getSecondRuneStyleImageLocation(player.secondaryRuneStyle)}
-            width={ICON_SIZE_SMALL}
-            height={ICON_SIZE_SMALL}
-            alt="..."
+            alt="secondary rune style"
           />
         </div>
         <div className="row">
           <img
-            className="rune-spell-img col-6"
+            className="rune-spell-img-small col-6"
             src={getSpellImageLocation(player.spell1)}
-            width={ICON_SIZE_SMALL}
-            height={ICON_SIZE_SMALL}
-            alt="..."
+            alt="spell 1"
           />
 
           <img
-            className="rune-spell-img col-6"
+            className="rune-spell-img-small col-6"
             src={getSpellImageLocation(player.spell2)}
-            width={ICON_SIZE_SMALL}
-            height={ICON_SIZE_SMALL}
-            alt="..."
+            alt="spell 2"
           />
         </div>
       </div>
@@ -68,11 +56,9 @@ function MatchDetailOverview(props) {
             {player.items.map((code) =>
               code !== 0 ? (
                 <img
-                  className="item-img"
+                  className="item-img-small"
                   src={getItemImageLocation(code)}
-                  width={ICON_SIZE_SMALL}
-                  height={ICON_SIZE_SMALL}
-                  alt="..."
+                  alt={`item ${code.index}`}
                 />
               ) : null
             )}

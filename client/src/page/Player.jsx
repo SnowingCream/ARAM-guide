@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import profileIcon from "../asset/data_dragon/profileicon.json";
 import Calendar from "../component/Calendar.jsx";
-import { ICON_SIZE_BIG, round } from "../asset/var.js";
+import { round } from "../asset/var.js";
 import ChampionSummaryContainer from "../component/ChampionSummaryContainer.jsx";
 import MatchSummaryContainer from "../component/MatchSummaryContainer.jsx";
 
@@ -186,10 +186,9 @@ function Player() {
               {user.userName} #{user.tag}
             </h2>
             <img
+              className="profile-img"
               src={src_location}
-              alt="profileIcon"
-              width={ICON_SIZE_BIG}
-              height={ICON_SIZE_BIG}
+              alt="profile icon"
             />
 
             <p>

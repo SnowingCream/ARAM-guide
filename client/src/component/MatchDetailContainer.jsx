@@ -1,52 +1,54 @@
-import MatchDetailOverview from "./MatchDetailOverview";
-import MatchDetailGraph from "./MatchDetailGraph";
+import MatchDetailOverviewContainer from "./MatchDetailOverviewContainer";
+import MatchDetailGraphContainer from "./MatchDetailGraphContainer";
 import React, { useState } from "react";
 
 function MatchDetailContainer(props) {
-  const teamWin = props.win;
-  const teamLose = props.lose;
-
   const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <div>
-      <div className="row">
+      <div className="row bg-secondary text-muted">
         <ul class="nav nav-pills nav-fill">
           <li class="nav-item">
-            <a
+            <button
               className={`nav-link ${
                 activeTab === "overview" ? "active" : ""
               } `}
               onClick={() => setActiveTab("overview")}
             >
               Overview
-            </a>
+            </button>
           </li>
           <li class="nav-item">
-            <a
+            <button
               className={`nav-link ${activeTab === "graph" ? "active" : ""}`}
               onClick={() => setActiveTab("graph")}
             >
               Graph Analysis
-            </a>
+            </button>
           </li>
         </ul>
       </div>
-      {activeTab === "overview" && (
+      {/* {activeTab === "graph" && (
         <div className="row">
           <div className="team col-md-6 bg-primary">
             {teamWin.map((data, index) => (
-              <MatchDetailOverview data={data} key={index} />
+              <MatchDetailGraph data={data} key={index} />
             ))}
           </div>
           <div className="team col-md-6 bg-danger">
             {teamLose.map((data, index) => (
-              <MatchDetailOverview data={data} key={index} />
+              <MatchDetailGraph data={data} key={index} />
             ))}
           </div>
         </div>
+      )} */}
+      {activeTab === "overview" && (
+        <MatchDetailOverviewContainer win={props.win} lose={props.lose} />
       )}
-      {activeTab === "graph" && <MatchDetailGraph />}
+      {activeTab === "graph" && (
+        <MatchDetailGraphContainer win={props.win} lose={props.lose} />
+      )}
     </div>
   );
 }

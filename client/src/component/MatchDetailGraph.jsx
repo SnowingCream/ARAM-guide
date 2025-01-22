@@ -1,18 +1,22 @@
 import React from "react";
+import { round } from "../asset/var.js";
 
 function MatchDetailGraph(props) {
+  const valueMax = props.valueMax;
+  const valueNow = props.valueNow;
+  const teamTotal = props.teamTotal;
+
   return (
     <div>
-      <h5>LABEL</h5>
-      <div className="progress">
+      <div className="progress mb-0">
         <div
-          style={{ width: `${30}%` }}
-          className="progress-bar"
-          aria-valuenow="30"
+          style={{ width: `${(valueNow / valueMax) * 100}%` }}
+          className="progress-bar bg-secondary"
+          aria-valuenow={valueNow}
           aria-valuemin="0"
-          aria-valuemax="100"
+          aria-valuemax={valueMax}
         >
-          {`30%`}
+          {`${valueNow} (${round(valueNow / teamTotal, 1)}%)`}
         </div>
       </div>
     </div>

@@ -109,10 +109,6 @@ const sortButtonList = [
   },
 ];
 
-// these are not working... the actual size is handled at App.css
-const ICON_SIZE_BIG = 48;
-const ICON_SIZE_SMALL = 24;
-
 function round(value, digitAfterDecimal, percent = true) {
   if (percent) {
     return (
@@ -197,8 +193,6 @@ function getItemImageLocation(code) {
 export {
   regionList,
   sortButtonList,
-  ICON_SIZE_BIG,
-  ICON_SIZE_SMALL,
   round,
   getChampionImageLocation,
   getSpellImageLocation,
