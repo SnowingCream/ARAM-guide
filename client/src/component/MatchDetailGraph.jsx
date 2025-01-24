@@ -6,20 +6,20 @@ function MatchDetailGraph(props) {
 
   return (
     <div>
-      <h5>{info.title}</h5>
-      <div className="row my-2">
+      <h5>{info.description}</h5>
+      <div className="row my-2 mx-1">
         <div className="team-win col-md-6 bg-primary">
-          <p>{info.teamWinTotal}</p>
+          <p className="my-2">{info.teamWinTotal}</p>
           {info.teamWin.map((data, index) => (
-            <div className="row my-1 ">
-              <div className="col-1">
+            <div className="row my-1">
+              <div className="col-2">
                 <img
-                  className="champion-img-small"
+                  className="champion-img-small "
                   src={getChampionImageLocation(data.champion)}
                   alt="champion"
                 />
               </div>
-              <div className="col-11 align-items-center justify-content-center">
+              <div className="col-10">
                 <BarGraph
                   valueMax={info.max}
                   valueNow={data.val}
@@ -31,17 +31,17 @@ function MatchDetailGraph(props) {
           ))}
         </div>
         <div className="team-lose col-md-6 bg-danger">
-          <p>{info.teamLoseTotal}</p>
+          <p className="my-2">{info.teamLoseTotal}</p>
           {info.teamLose.map((data, index) => (
             <div className="row my-1">
-              <div className="col-1">
+              <div className="col-2">
                 <img
                   className="champion-img-small"
                   src={getChampionImageLocation(data.champion)}
                   alt="champion"
                 />
               </div>
-              <div className="col-11">
+              <div className="col-10">
                 <BarGraph
                   valueMax={info.max}
                   valueNow={data.val}

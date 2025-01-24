@@ -196,6 +196,8 @@ function Player() {
         ccTo: dataFromApi.matchRecords[i].info.participants[j].timeCCingOthers,
         ccFrom:
           dataFromApi.matchRecords[i].info.participants[j].totalTimeCCDealt,
+        timeDead:
+          dataFromApi.matchRecords[i].info.participants[j].totalTimeSpentDead,
       };
       playerRecords.push(playerRecord);
     }

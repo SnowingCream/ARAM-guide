@@ -6,19 +6,25 @@ function BarGraph(props) {
   const valueNow = props.valueNow;
   const teamTotal = props.teamTotal;
 
+  const percentage = (valueNow / valueMax) * 100;
+  const shouldTextBeOutside = percentage < 5;
+
   return (
-    <div>
+    <div className="progress-wrapper">
       <div className="progress mb-0">
         <div
-          style={{ width: `${(valueNow / valueMax) * 100}%` }}
-          className="progress-bar bg-secondary"
+          style={{ width: `${percentage}%` }}
+          className={`progress-bar bg-secondary ${
+            shouldTextBeOutside ? "text-transparent" : "text-dynamic"
+          }`}
           aria-valuenow={valueNow}
           aria-valuemin="0"
           aria-valuemax={valueMax}
-        >
-          {`${valueNow} (${round(valueNow / teamTotal, 1)}%)`}
-        </div>
+        ></div>
       </div>
+      <span className="progress-text">
+        {valueNow} ({round(valueNow / teamTotal, 1)}%)
+      </span>
     </div>
   );
 }

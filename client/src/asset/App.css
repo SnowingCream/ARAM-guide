@@ -143,11 +143,42 @@ small {
   width: 72px;
 }
 
-/* to vertically center progress bar */
 .row {
   display: flex;
   align-items: center;
 }
-div.progress {
+
+/* graph value display setting*/
+
+/* Wrapper to manage relative positioning */
+.progress-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Progress bar styles */
+.progress {
+  width: 100%;
+  background-color: #ddd;
+  height: 20px;
+  border-radius: 5px;
+  overflow: hidden;
   margin: 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #6c757d; /* Secondary color */
+  transition: width 0.3s ease;
+}
+
+/* Text alignment for both inside and outside */
+.progress-text {
+  position: absolute;
+  left: 10px; /* Always align numbers to the left */
+  font-size: 0.875rem;
+  white-space: nowrap;
+  color: #6c757d;
 }
