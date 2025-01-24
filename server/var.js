@@ -20,7 +20,10 @@ const URL_accountByNameAndTag =
 // https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{Puuid}/ids?queue=450
 const URL_matchesByPuuid1 =
   "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/";
-const URL_matchesByPuuid2 = `ids?queue=450&count=${numMatches}`;
+
+// const URL_matchesByPuuid2 = `ids?queue=450&count=${numMatches}`;
+// BUG on riot side: queue param doesn't work. use this for now and once fixed go back to the one above.
+const URL_matchesByPuuid2 = `ids?count=${numMatches}`;
 
 // https://americas.api.riotgames.com/lol/match/v5/matches/{testMatchID}
 const URL_matchByMatchid =

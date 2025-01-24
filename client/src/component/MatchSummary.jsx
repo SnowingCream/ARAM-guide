@@ -117,13 +117,13 @@ function MatchSummary(props) {
 
         <div className="col-2 d-flex align-items-center justify-content-center">
           <div className="row item-grid">
-            {user.items.map((code) =>
+            {user.items.map((code, idx) =>
               code !== 0 ? (
-                <div key={code.index} className="col-4 px-0">
+                <div key={idx} className="col-4 px-0">
                   <img
                     className="item-img-small"
                     src={getItemImageLocation(code)}
-                    alt={`item ${code.index}`}
+                    alt={`item ${idx + 1}`}
                   />
                 </div>
               ) : null

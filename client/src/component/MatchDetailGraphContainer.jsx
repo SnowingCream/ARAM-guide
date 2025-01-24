@@ -1,23 +1,49 @@
-import MatchDetailGraph from "./MatchDetailGraph";
-
-import { getChampionImageLocation } from "../asset/var.js";
+import MatchDetailGraph from "./MatchDetailGraph.jsx";
 
 function MatchDetailGraphContainer(props) {
   const teamWin = props.win;
   const teamLose = props.lose;
 
-  var maxKill = 0;
-  var teamWinTotalKill = 0;
-  var teamLoseTotalKill = 0;
+  const singleGraphNames = ["gold", "cs", "totalDamage", "damaged", "teamHeal"];
+  const singleGraphObjects = [];
 
-  for (let i = 0; i < 5; i++) {
-    maxKill = Math.max(maxKill, teamWin[i].kill);
-    teamWinTotalKill += teamWin[i].kill;
+  for (let i = 0; i < singleGraphNames.length; i++) {
+    singleGraphObjects.push({
+      title: singleGraphNames[i],
+      max: 0,
+      teamWinTotal: 0,
+      teamLoseTotal: 0,
+      teamWin: [],
+      teamLose: [],
+    });
   }
 
+  // teamWin iteration
   for (let i = 0; i < 5; i++) {
-    maxKill = Math.max(maxKill, teamLose[i].kill);
-    teamLoseTotalKill += teamLose[i].kill;
+    for (let j = 0; j < singleGraphObjects.length; j++) {
+      const sgo = singleGraphObjects[j];
+      const attr = sgo.title;
+      sgo.max = Math.max(sgo.max, teamWin[i][attr]);
+      sgo.teamWinTotal += teamWin[i][attr];
+      sgo.teamWin.push({
+        val: teamWin[i][attr],
+        champion: teamWin[i].champion,
+      });
+    }
+  }
+
+  // teamLose iteration
+  for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < singleGraphObjects.length; j++) {
+      const sgo = singleGraphObjects[j];
+      const attr = sgo.title;
+      sgo.max = Math.max(sgo.max, teamLose[i][attr]);
+      sgo.teamLoseTotal += teamLose[i][attr];
+      sgo.teamLose.push({
+        val: teamLose[i][attr],
+        champion: teamLose[i].champion,
+      });
+    }
   }
 
   return (
@@ -25,51 +51,9 @@ function MatchDetailGraphContainer(props) {
     <div>
       {/* each row takes one graph -> gold for beginning */}
       <div className="row my-2">
-        <h5>Kill</h5>
-        <div className="team-win col-md-6 bg-primary">
-          <p>{teamWinTotalKill}</p>
-          {teamWin.map((data, index) => (
-            <div className="row my-1 ">
-              <div className="col-1">
-                <img
-                  className="champion-img-small"
-                  src={getChampionImageLocation(data.champion)}
-                  alt="champion"
-                />
-              </div>
-              <div className="col-11 align-items-center justify-content-center">
-                <MatchDetailGraph
-                  valueMax={maxKill}
-                  valueNow={data.kill}
-                  teamTotal={teamWinTotalKill}
-                  key={index}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="team-lose col-md-6 bg-danger">
-          <p>{teamLoseTotalKill}</p>
-          {teamLose.map((data, index) => (
-            <div className="row my-1">
-              <div className="col-1">
-                <img
-                  className="champion-img-small"
-                  src={getChampionImageLocation(data.champion)}
-                  alt="champion"
-                />
-              </div>
-              <div className="col-11">
-                <MatchDetailGraph
-                  valueMax={maxKill}
-                  valueNow={data.kill}
-                  teamTotal={teamLoseTotalKill}
-                  key={index}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+        {singleGraphObjects.map((data, index) => (
+          <MatchDetailGraph data={data} key={index} />
+        ))}
       </div>
     </div>
   );
