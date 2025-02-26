@@ -61,7 +61,7 @@ router.get("/champion", (req, res) => {
   res.send({ test: "champion detected" });
 });
 
-router.post("/player", (req, res) => {
+router.post(`/player`, (req, res) => {
   (async function () {
     try {
       // First call

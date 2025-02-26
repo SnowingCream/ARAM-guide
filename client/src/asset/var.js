@@ -121,12 +121,10 @@ function round(value, digitAfterDecimal, percent = true) {
     );
   }
 }
-
 // functions below work based on the assumption that the location of file that imports these are under components folder (direct child of it)
 
 function getChampionImageLocation(championName) {
   const championImageLocationFront = "asset/img/champion/";
-
   return championImageLocationFront + champion.data[championName].image.full;
 }
 

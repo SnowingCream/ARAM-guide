@@ -182,3 +182,34 @@ small {
   white-space: nowrap;
   color: #6c757d;
 }
+
+/* match detail tab color adjustment  */
+
+.nav-link.match-detail-tab {
+  color: black !important; /* Default text color */
+  background-color: lightgray !important; /* Default background */
+  border: 1px solid gray !important;
+}
+
+.nav-link:hover.match-detail-tab {
+  color: white !important;
+  background-color: darkgray !important; /* Change color on hover */
+}
+
+.nav-link.active.match-detail-tab {
+  color: white !important;
+  background-color: #b2beb5 !important; /* Custom active tab color */
+}
+
+.match-detail-tab-holder {
+  padding-right: 0 !important;
+}
+
+/* 
+.pastel-red {
+  background-color: #e16a54 !important;
+}
+
+.pastel-blue {
+  background-color: #7bd3ea !important;
+} */

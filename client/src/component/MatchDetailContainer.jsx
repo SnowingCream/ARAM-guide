@@ -8,10 +8,10 @@ function MatchDetailContainer(props) {
   return (
     <div>
       <div className="row bg-secondary text-muted">
-        <ul class="nav nav-pills nav-fill">
-          <li class="nav-item">
+        <ul className="nav nav-pills nav-fill match-detail-tab-holder">
+          <li className="nav-item w-50">
             <button
-              className={`nav-link ${
+              className={`nav-link match-detail-tab ${
                 activeTab === "overview" ? "active" : ""
               } `}
               onClick={() => setActiveTab("overview")}
@@ -19,9 +19,11 @@ function MatchDetailContainer(props) {
               Overview
             </button>
           </li>
-          <li class="nav-item">
+          <li className="nav-item w-50">
             <button
-              className={`nav-link ${activeTab === "graph" ? "active" : ""}`}
+              className={`nav-link match-detail-tab ${
+                activeTab === "graph" ? "active" : ""
+              }`}
               onClick={() => setActiveTab("graph")}
             >
               Graph Analysis
@@ -29,20 +31,6 @@ function MatchDetailContainer(props) {
           </li>
         </ul>
       </div>
-      {/* {activeTab === "graph" && (
-        <div className="row">
-          <div className="team col-md-6 bg-primary">
-            {teamWin.map((data, index) => (
-              <MatchDetailGraph data={data} key={index} />
-            ))}
-          </div>
-          <div className="team col-md-6 bg-danger">
-            {teamLose.map((data, index) => (
-              <MatchDetailGraph data={data} key={index} />
-            ))}
-          </div>
-        </div>
-      )} */}
       {activeTab === "overview" && (
         <MatchDetailOverviewContainer win={props.win} lose={props.lose} />
       )}

@@ -7,6 +7,9 @@ import {
   getItemImageLocation,
 } from "../asset/var.js";
 
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+
 function MatchDetailOverview(props) {
   const player = props.data;
 
@@ -49,7 +52,14 @@ function MatchDetailOverview(props) {
 
       <div className="col-5">
         <div className="row">
-          <p className="mb-0">{`${player.userName} #${player.tag}`}</p>
+          <OverlayTrigger
+            placement="top"
+            overlay={
+              <Tooltip id="tooltip">{`${player.userName} #${player.tag}`}</Tooltip>
+            }
+          >
+            <p className="mb-0 text-truncate">{`${player.userName}`}</p>
+          </OverlayTrigger>
         </div>
         <div className="row">
           <div className="col">

@@ -31,10 +31,22 @@ function Body() {
   // const callChampion = async () => {
   //   axios.get("/api/champion").then((res) => console.log(res.data.test));
   // };
+
+  // const callPlayer = async (data) => {
+  //   console.log("sending data: ", data);
+  //   axios.post(`/api/player/${data.name}#${data.tag}`, data).then((res) => {
+  //     console.log(res.data);
+  //     navigate(`/player/${data.name}#${data.tag}`, { state: res.data });
+  //   });
+  // };
+
   const callPlayer = async (data) => {
     console.log("sending data: ", data);
     axios.post("/api/player", data).then((res) => {
       console.log(res.data);
+
+      // const final_address = `/player/${data.name}#${data.tag}`;
+      // navigate(final_address, { state: res.data });
       navigate("/player", { state: res.data });
     });
   };

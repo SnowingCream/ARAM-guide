@@ -4,7 +4,7 @@ function MatchSummaryContainer(props) {
   const matchList = props.data;
 
   return (
-    <div>
+    <div className="mb-1">
       {matchList.map((data, index) => (
         <MatchSummary data={data} key={index} />
       ))}
