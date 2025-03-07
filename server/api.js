@@ -33,8 +33,15 @@ async function axiosGet(URL) {
     // Return the value to be used in the second API call
     return data;
   } catch (error) {
-    console.error("Error in API call:", error.message);
-    throw error; // Propagate the error so the caller knows something went wrong
+    if (error.response) {
+      console.error("Error Response Data:", error.response.data);
+      console.error("Error Response Status:", error.response.status);
+    } else if (error.request) {
+      console.error("Error Request:", error.request);
+    } else {
+      console.error("Error Message:", error.message);
+    }
+    throw error;
   }
 }
 
@@ -118,187 +125,206 @@ router.post(`/player`, (req, res) => {
       res.send(error.message);
     }
 
-    // // DB store data
-    // const client = await pool.connect();
-    // try {
-    //   for (match in thirdResult) {
-    //     /* const DB_matches_query = `
-    //   INSERT INTO matches (match_id, game_duration, remake, game_start, game_end, version_1, version_2)
-    //   VALUES ($1, $2, $3, $4, $5, $6, $7)
-    //   ON CONFLICT (match_id)
-    //   DO NOTHING`; */
+    // DB store data
+    const client = await pool.connect();
+    try {
+      // like a "for a in b" in python
+      for (const match of thirdResult) {
+        /* const DB_matches_query = `
+      INSERT INTO matches (match_id, game_duration, remake, game_start, game_end, version_1, version_2)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      ON CONFLICT (match_id)
+      DO NOTHING`; */
 
-    //     const gameStart = new Date(match.info.gameStartTimeStamp);
-    //     const gameEnd = new Date(match.info.gameEndTimeStamp);
-    //     const version = match.info.gameVersion.split(".");
+        const gameStart = new Date(match.info.gameStartTimestamp)
+          .toISOString()
+          .replace("T", " ")
+          .split(".")[0]; // remove time zone
 
-    //     // matches table
-    //     // not sure about type conversion, give a shot wi
-    //     await client.query(DB_matches_query, [
-    //       match.metadata.matchId,
-    //       match.info.gameDuration,
-    //       match.info.participants[0].gameEndedInEarlySurrender,
-    //       gameStart,
-    //       gameEnd,
-    //       version[0],
-    //       version[1],
-    //     ]);
+        const gameEnd = new Date(match.info.gameEndTimestamp)
+          .toISOString()
+          .replace("T", " ")
+          .split(".")[0]; // remove time zone
 
-    //     // my gut is that avoiding challenges will be the best, since it seems to be missing some attributes if there are no updates for those attributes in that game.
-    //     // then for some statistics I need to manually calculate before the execution query.
+        const version = match.info.gameVersion.split(".");
 
-    //     const teamKills = [0, 0];
-    //     const teamDamage = [0, 0];
-    //     const teamDamaged = [0, 0];
-    //     let team2Kills = 0;
-    //     let team1Damage = 0;
-    //     let team2Damage = 0;
-    //     let team1DamageTaken = 0;
-    //     let team2DamageTaken = 0;
+        console.log([
+          match.metadata.matchId,
+          match.info.gameDuration,
+          match.info.participants[0].gameEndedInEarlySurrender,
+          gameStart,
+          gameEnd,
+          version[0],
+          version[1],
+        ]);
 
-    //     for (let i = 0; i < 10; i++) {
-    //       // team1 = 0 ~ 4, team2 = 5 ~ 9
-    //       teamKills[Math.floor(i / 5)] += match.info.participants[i].kills;
-    //       teamDamage[Math.floor(i / 5)] += match.info.participants[i].kills;
-    //       teamDamaged[Math.floor(i / 5)] += match.info.participants[i].kills;
-    //       // // team1 = index 0 ~ 4
-    //       // if (i < 5) {
-    //       //   team1Kills += match.info.participants[i].kills;
-    //       //   team1Damage += match.info.participants[i].totalDamageDealtToChampions,
-    //       //   team1DamageTaken += match.info.participants[i].totalDamageTaken
-    //       // }
-    //       // // team2 = index 5 ~ 9
-    //       // else {
-    //       //   team2Kills += match.info.participants[i].kills;
-    //       //   team2Damage += match.info.participants[i].totalDamageDealtToChampions,
-    //       //   team2DamageTaken += match.info.participants[i].totalDamageTaken
-    //       // }
-    //     }
+        // matches table
+        // not sure about type conversion, give a shot wi
+        await client.query(DB_matches_query, [
+          match.metadata.matchId,
+          match.info.gameDuration,
+          match.info.participants[0].gameEndedInEarlySurrender,
+          new Date(gameStart),
+          new Date(gameEnd),
+          version[0],
+          version[1],
+        ]);
 
-    //     for (let i = 0; i < 10; i++) {
-    //       /* const DB_accounts_query = `
-    //       INSERT INTO accounts (puuid, user_name, tag, lvl, icon_id)
-    //       VALUES ($1, $2, $3, $4, $5)
-    //       ON CONFLICT (puuid)
-    //       DO UPDATE SET
-    //       user_name = EXCLUDED.user_name,
-    //       tag = EXCLUDED.tag,
-    //       lvl = EXCLUDED.lvl,
-    //       icon_id = EXCLUDED.icon_id`;*/
+        // my gut is that avoiding challenges will be the best, since it seems to be missing some attributes if there are no updates for those attributes in that game.
+        // then for some statistics I need to manually calculate before the execution query.
 
-    //       const userIndex = thirdResult[0].metadata.participants.indexOf(
-    //         firstResult.puuid
-    //       );
+        const teamKills = [0, 0];
+        const teamDamage = [0, 0];
+        const teamDamaged = [0, 0];
+        let team2Kills = 0;
+        let team1Damage = 0;
+        let team2Damage = 0;
+        let team1DamageTaken = 0;
+        let team2DamageTaken = 0;
 
-    //       // accounts table
-    //       await client.query(DB_accounts_query, [
-    //         match.info.participants[i].puuid,
-    //         match.info.participants[i].riotIdGameName,
-    //         match.info.participants[i].riotIdTagline,
-    //         match.info.participants[i].summonerLevel,
-    //         match.info.participants[i].profileIcon,
-    //       ]);
+        for (let i = 0; i < 10; i++) {
+          // team1 = 0 ~ 4, team2 = 5 ~ 9
+          teamKills[Math.floor(i / 5)] += match.info.participants[i].kills;
+          teamDamage[Math.floor(i / 5)] += match.info.participants[i].kills;
+          teamDamaged[Math.floor(i / 5)] += match.info.participants[i].kills;
+          // // team1 = index 0 ~ 4
+          // if (i < 5) {
+          //   team1Kills += match.info.participants[i].kills;
+          //   team1Damage += match.info.participants[i].totalDamageDealtToChampions,
+          //   team1DamageTaken += match.info.participants[i].totalDamageTaken
+          // }
+          // // team2 = index 5 ~ 9
+          // else {
+          //   team2Kills += match.info.participants[i].kills;
+          //   team2Damage += match.info.participants[i].totalDamageDealtToChampions,
+          //   team2DamageTaken += match.info.participants[i].totalDamageTaken
+          // }
+        }
 
-    //       /* const DB_match_account_query = `
-    //   INSERT INTO match_account (match_id, puuid, win, champ_name, champ_id, champ_lvl, gold, cs, kill, death, assist, kda,
-    //   damag_to_total, damaged_by, heal_team, shield_team, time_cc_to, time_ccd_by, kill_participation_pct, damage_pct,
-    //   damaged_pct, spell_1, spell_2, rune_main, rune_sub, rune_main_1, rune_main_2, rune_main_3, rune_main_4, rune_sub_1,
-    //   rune_sub_2, stat_off, stat_flex, stat_def, item_1, item_2, item_3, item_4, item_5, item_6, double_kill, triple_kill,
-    //   quadra_kill, penta_kill, damage_to_physical, damage_to_magic, damage_to_true, damaged_mitigated, damaged_self_healed,
-    //   item_0)
-    //   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27,
-    //   $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50)
-    //   ON CONFLICT (match_id, puuid)
-    //   DO NOTHING`;*/
+        for (let i = 0; i < 10; i++) {
+          /* const DB_accounts_query = `
+          INSERT INTO accounts (puuid, user_name, tag, lvl, icon_id)
+          VALUES ($1, $2, $3, $4, $5)
+          ON CONFLICT (puuid)
+          DO UPDATE SET
+          user_name = EXCLUDED.user_name,
+          tag = EXCLUDED.tag,
+          lvl = EXCLUDED.lvl,
+          icon_id = EXCLUDED.icon_id`;*/
 
-    //       // account_match table
-    //       await client.query(DB_match_account_query, [
-    //         match.metadata.matchId,
-    //         match.info.participants[i].puuid,
-    //         match.info.participants[i].win,
-    //         match.info.participants[i].championName,
-    //         match.info.participants[i].championId,
-    //         match.info.participants[i].champLevel,
-    //         match.info.participants[i].goldEarned,
-    //         match.info.participants[i].totalMinionsKilled,
-    //         match.info.participants[i].kills,
-    //         match.info.participants[i].deaths,
-    //         match.info.participants[i].assists,
-    //         round(
-    //           (match.info.participants[i].kills +
-    //             match.info.participants[i].assists) /
-    //             match.info.participants[i].deaths,
-    //           2,
-    //           false
-    //         ), // kda
-    //         match.info.participants[i].totalDamageDealtToChampions,
-    //         match.info.participants[i].totalDamageTaken,
-    //         match.info.participants[i].totalHealsOnTeammates,
-    //         match.info.participants[i].totalDamageShieldedOnTeammates,
-    //         match.info.participants[i].timeCCingOthers,
-    //         match.info.participants[i].totalTimeCCDealt,
-    //         // kill participation
-    //         round(
-    //           (match.info.participants[i].kills +
-    //             match.info.participants[i].assists) /
-    //             teamKills[Math.floor(i / 5)],
-    //           4,
-    //           false
-    //         ),
-    //         // teamDamagePercentage
-    //         round(
-    //           match.info.participants[i].totalDamageDealtToChampions /
-    //             teamDamage[Math.floor(i / 5)],
-    //           4,
-    //           false
-    //         ),
-    //         // damageTakenOnTeamPercentage
-    //         round(
-    //           match.info.participants[i].totalDamageTaken /
-    //             teamDamaged[Math.floor(i / 5)],
-    //           4,
-    //           false
-    //         ),
-    //         match.info.participants[i].summoner1Id,
-    //         match.info.participants[i].summoner2Id,
-    //         match.info.participants[i].perks.styles[0].style,
-    //         match.info.participants[i].perks.styles[1].style,
-    //         match.info.participants[i].perks.styles[0].selections[0].perk,
-    //         match.info.participants[i].perks.styles[0].selections[1].perk,
-    //         match.info.participants[i].perks.styles[0].selections[2].perk,
-    //         match.info.participants[i].perks.styles[0].selections[3].perk,
-    //         match.info.participants[i].perks.styles[1].selections[0].perk,
-    //         match.info.participants[i].perks.styles[1].selections[1].perk,
-    //         match.info.participants[i].perks.statPerks.offense,
-    //         match.info.participants[i].perks.statPerks.flex,
-    //         match.info.participants[i].perks.statPerks.defense,
-    //         match.info.participants[i].item1,
-    //         match.info.participants[i].item2,
-    //         match.info.participants[i].item3,
-    //         match.info.participants[i].item4,
-    //         match.info.participants[i].item5,
-    //         match.info.participants[i].item6,
-    //         match.info.participants[i].doubleKills,
-    //         match.info.participants[i].tripleKills,
-    //         match.info.participants[i].quadraKills,
-    //         match.info.participants[i].pentaKills,
-    //         match.info.participants[i].physicalDamageDealtToChampions,
-    //         match.info.participants[i].magicDamageDealtToChampions,
-    //         match.info.participants[i].trueDamageDealtToChampions,
-    //         match.info.participants[i].damageSelfMitigated,
-    //         match.info.participants[i].totalHeal -
-    //           match.info.participants[i].totalHealsOnTeammates, // self heal = total heal - team heal
-    //         match.info.participants[i].item0,
-    //       ]);
-    //     }
-    //   }
-    //   client.release();
-    //   console.log("Data successfully stored in DB");
-    // } catch (err) {
-    //   client.release();
-    //   console.error("Database Error:", err);
-    //   throw err;
-    // }
+          const userIndex = thirdResult[0].metadata.participants.indexOf(
+            firstResult.puuid
+          );
+
+          // accounts table
+          await client.query(DB_accounts_query, [
+            match.info.participants[i].puuid,
+            match.info.participants[i].riotIdGameName,
+            match.info.participants[i].riotIdTagline,
+            match.info.participants[i].summonerLevel,
+            match.info.participants[i].profileIcon,
+          ]);
+
+          /* const DB_match_account_query = `
+      INSERT INTO match_account (match_id, puuid, win, champ_name, champ_id, champ_lvl, gold, cs, kill, death, assist, kda,
+      damag_to_total, damaged_by, heal_team, shield_team, time_cc_to, time_ccd_by, kill_participation_pct, damage_pct,
+      damaged_pct, spell_1, spell_2, rune_main, rune_sub, rune_main_1, rune_main_2, rune_main_3, rune_main_4, rune_sub_1,
+      rune_sub_2, stat_off, stat_flex, stat_def, item_1, item_2, item_3, item_4, item_5, item_6, double_kill, triple_kill,
+      quadra_kill, penta_kill, damage_to_physical, damage_to_magic, damage_to_true, damaged_mitigated, damaged_self_healed,
+      item_0)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27,
+      $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50)
+      ON CONFLICT (match_id, puuid)
+      DO NOTHING`;*/
+
+          // account_match table
+          await client.query(DB_match_account_query, [
+            match.metadata.matchId,
+            match.info.participants[i].puuid,
+            match.info.participants[i].win,
+            match.info.participants[i].championName,
+            match.info.participants[i].championId,
+            match.info.participants[i].champLevel,
+            match.info.participants[i].goldEarned,
+            match.info.participants[i].totalMinionsKilled,
+            match.info.participants[i].kills,
+            match.info.participants[i].deaths,
+            match.info.participants[i].assists,
+            round(
+              (match.info.participants[i].kills +
+                match.info.participants[i].assists) /
+                match.info.participants[i].deaths,
+              2,
+              false
+            ), // kda
+            match.info.participants[i].totalDamageDealtToChampions,
+            match.info.participants[i].totalDamageTaken,
+            match.info.participants[i].totalHealsOnTeammates,
+            match.info.participants[i].totalDamageShieldedOnTeammates,
+            match.info.participants[i].timeCCingOthers,
+            match.info.participants[i].totalTimeCCDealt,
+            // kill participation
+            round(
+              (match.info.participants[i].kills +
+                match.info.participants[i].assists) /
+                teamKills[Math.floor(i / 5)],
+              4,
+              false
+            ),
+            // teamDamagePercentage
+            round(
+              match.info.participants[i].totalDamageDealtToChampions /
+                teamDamage[Math.floor(i / 5)],
+              4,
+              false
+            ),
+            // damageTakenOnTeamPercentage
+            round(
+              match.info.participants[i].totalDamageTaken /
+                teamDamaged[Math.floor(i / 5)],
+              4,
+              false
+            ),
+            match.info.participants[i].summoner1Id,
+            match.info.participants[i].summoner2Id,
+            match.info.participants[i].perks.styles[0].style,
+            match.info.participants[i].perks.styles[1].style,
+            match.info.participants[i].perks.styles[0].selections[0].perk,
+            match.info.participants[i].perks.styles[0].selections[1].perk,
+            match.info.participants[i].perks.styles[0].selections[2].perk,
+            match.info.participants[i].perks.styles[0].selections[3].perk,
+            match.info.participants[i].perks.styles[1].selections[0].perk,
+            match.info.participants[i].perks.styles[1].selections[1].perk,
+            match.info.participants[i].perks.statPerks.offense,
+            match.info.participants[i].perks.statPerks.flex,
+            match.info.participants[i].perks.statPerks.defense,
+            match.info.participants[i].item1,
+            match.info.participants[i].item2,
+            match.info.participants[i].item3,
+            match.info.participants[i].item4,
+            match.info.participants[i].item5,
+            match.info.participants[i].item6,
+            match.info.participants[i].doubleKills,
+            match.info.participants[i].tripleKills,
+            match.info.participants[i].quadraKills,
+            match.info.participants[i].pentaKills,
+            match.info.participants[i].physicalDamageDealtToChampions,
+            match.info.participants[i].magicDamageDealtToChampions,
+            match.info.participants[i].trueDamageDealtToChampions,
+            match.info.participants[i].damageSelfMitigated,
+            match.info.participants[i].totalHeal -
+              match.info.participants[i].totalHealsOnTeammates, // self heal = total heal - team heal
+            match.info.participants[i].item0,
+          ]);
+        }
+      }
+      client.release();
+      console.log("DB query processed");
+    } catch (err) {
+      client.release();
+      console.error("Database Error:", err);
+      throw err;
+    }
   })();
 });
 
