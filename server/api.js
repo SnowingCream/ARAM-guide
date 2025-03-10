@@ -130,33 +130,14 @@ router.post(`/player`, (req, res) => {
     try {
       // like a "for a in b" in python
       for (const match of thirdResult) {
+        // need to check 14 >= version[0] to prevent going too far for recursive search in the production.
+        const version = match.info.gameVersion.split(".");
+
         /* const DB_matches_query = `
       INSERT INTO matches (match_id, game_duration, remake, game_start, game_end, version_1, version_2)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       ON CONFLICT (match_id)
       DO NOTHING`; */
-
-        const gameStart = new Date(match.info.gameStartTimestamp)
-          .toISOString()
-          .replace("T", " ")
-          .split(".")[0]; // remove time zone
-
-        const gameEnd = new Date(match.info.gameEndTimestamp)
-          .toISOString()
-          .replace("T", " ")
-          .split(".")[0]; // remove time zone
-
-        const version = match.info.gameVersion.split(".");
-
-        console.log([
-          match.metadata.matchId,
-          match.info.gameDuration,
-          match.info.participants[0].gameEndedInEarlySurrender,
-          gameStart,
-          gameEnd,
-          version[0],
-          version[1],
-        ]);
 
         // matches table
         // not sure about type conversion, give a shot wi
@@ -164,41 +145,24 @@ router.post(`/player`, (req, res) => {
           match.metadata.matchId,
           match.info.gameDuration,
           match.info.participants[0].gameEndedInEarlySurrender,
-          new Date(gameStart),
-          new Date(gameEnd),
+          new Date(match.info.gameStartTimestamp),
+          new Date(match.info.gameEndTimestamp),
           version[0],
           version[1],
         ]);
 
         // my gut is that avoiding challenges will be the best, since it seems to be missing some attributes if there are no updates for those attributes in that game.
-        // then for some statistics I need to manually calculate before the execution query.
-
         const teamKills = [0, 0];
         const teamDamage = [0, 0];
         const teamDamaged = [0, 0];
-        let team2Kills = 0;
-        let team1Damage = 0;
-        let team2Damage = 0;
-        let team1DamageTaken = 0;
-        let team2DamageTaken = 0;
 
         for (let i = 0; i < 10; i++) {
           // team1 = 0 ~ 4, team2 = 5 ~ 9
           teamKills[Math.floor(i / 5)] += match.info.participants[i].kills;
-          teamDamage[Math.floor(i / 5)] += match.info.participants[i].kills;
-          teamDamaged[Math.floor(i / 5)] += match.info.participants[i].kills;
-          // // team1 = index 0 ~ 4
-          // if (i < 5) {
-          //   team1Kills += match.info.participants[i].kills;
-          //   team1Damage += match.info.participants[i].totalDamageDealtToChampions,
-          //   team1DamageTaken += match.info.participants[i].totalDamageTaken
-          // }
-          // // team2 = index 5 ~ 9
-          // else {
-          //   team2Kills += match.info.participants[i].kills;
-          //   team2Damage += match.info.participants[i].totalDamageDealtToChampions,
-          //   team2DamageTaken += match.info.participants[i].totalDamageTaken
-          // }
+          teamDamage[Math.floor(i / 5)] +=
+            match.info.participants[i].totalDamageDealtToChampions;
+          teamDamaged[Math.floor(i / 5)] +=
+            match.info.participants[i].totalDamageTaken;
         }
 
         for (let i = 0; i < 10; i++) {
@@ -212,10 +176,6 @@ router.post(`/player`, (req, res) => {
           lvl = EXCLUDED.lvl,
           icon_id = EXCLUDED.icon_id`;*/
 
-          const userIndex = thirdResult[0].metadata.participants.indexOf(
-            firstResult.puuid
-          );
-
           // accounts table
           await client.query(DB_accounts_query, [
             match.info.participants[i].puuid,
@@ -227,7 +187,7 @@ router.post(`/player`, (req, res) => {
 
           /* const DB_match_account_query = `
       INSERT INTO match_account (match_id, puuid, win, champ_name, champ_id, champ_lvl, gold, cs, kill, death, assist, kda,
-      damag_to_total, damaged_by, heal_team, shield_team, time_cc_to, time_ccd_by, kill_participation_pct, damage_pct,
+      damage_to_total, damaged_by, heal_team, shield_team, time_cc_to, time_ccd_by, kill_participation_pct, damage_pct,
       damaged_pct, spell_1, spell_2, rune_main, rune_sub, rune_main_1, rune_main_2, rune_main_3, rune_main_4, rune_sub_1,
       rune_sub_2, stat_off, stat_flex, stat_def, item_1, item_2, item_3, item_4, item_5, item_6, double_kill, triple_kill,
       quadra_kill, penta_kill, damage_to_physical, damage_to_magic, damage_to_true, damaged_mitigated, damaged_self_healed,
@@ -236,6 +196,49 @@ router.post(`/player`, (req, res) => {
       $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50)
       ON CONFLICT (match_id, puuid)
       DO NOTHING`;*/
+
+          // if death is 0, store null to indicate infinity.
+          const kda =
+            match.info.participants[i].deaths === 0
+              ? null
+              : round(
+                  (match.info.participants[i].kills +
+                    match.info.participants[i].assists) /
+                    match.info.participants[i].deaths,
+                  2,
+                  false
+                );
+
+          const killParticipation =
+            teamKills[Math.floor(i / 5)] === 0
+              ? 0
+              : round(
+                  (match.info.participants[i].kills +
+                    match.info.participants[i].assists) /
+                    teamKills[Math.floor(i / 5)],
+                  4,
+                  false
+                );
+
+          const teamDamagePercentage =
+            teamDamage[Math.floor(i / 5)] === 0
+              ? 0
+              : round(
+                  match.info.participants[i].totalDamageDealtToChampions /
+                    teamDamage[Math.floor(i / 5)],
+                  4,
+                  false
+                );
+
+          const damageTakenOnTeamPercentage =
+            teamDamaged[Math.floor(i / 5)] === 0
+              ? 0
+              : round(
+                  match.info.participants[i].totalDamageTaken /
+                    teamDamaged[Math.floor(i / 5)],
+                  4,
+                  false
+                );
 
           // account_match table
           await client.query(DB_match_account_query, [
@@ -250,41 +253,16 @@ router.post(`/player`, (req, res) => {
             match.info.participants[i].kills,
             match.info.participants[i].deaths,
             match.info.participants[i].assists,
-            round(
-              (match.info.participants[i].kills +
-                match.info.participants[i].assists) /
-                match.info.participants[i].deaths,
-              2,
-              false
-            ), // kda
+            kda,
             match.info.participants[i].totalDamageDealtToChampions,
             match.info.participants[i].totalDamageTaken,
             match.info.participants[i].totalHealsOnTeammates,
             match.info.participants[i].totalDamageShieldedOnTeammates,
             match.info.participants[i].timeCCingOthers,
             match.info.participants[i].totalTimeCCDealt,
-            // kill participation
-            round(
-              (match.info.participants[i].kills +
-                match.info.participants[i].assists) /
-                teamKills[Math.floor(i / 5)],
-              4,
-              false
-            ),
-            // teamDamagePercentage
-            round(
-              match.info.participants[i].totalDamageDealtToChampions /
-                teamDamage[Math.floor(i / 5)],
-              4,
-              false
-            ),
-            // damageTakenOnTeamPercentage
-            round(
-              match.info.participants[i].totalDamageTaken /
-                teamDamaged[Math.floor(i / 5)],
-              4,
-              false
-            ),
+            killParticipation,
+            teamDamagePercentage,
+            damageTakenOnTeamPercentage,
             match.info.participants[i].summoner1Id,
             match.info.participants[i].summoner2Id,
             match.info.participants[i].perks.styles[0].style,
