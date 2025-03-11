@@ -1,93 +1,139 @@
 import champion from "./data_dragon/champion.json";
 import spell from "../asset/data_dragon/summoner.json";
 import rune from "../asset/data_dragon/runesReforged.json";
-// import item from "../asset/data_dragon/item.json";
 
+/*
+full: region option display
+abbr: region acronym. Not sure where it can be used, but let's keep it for now.
+abbrWithNum: default tag display
+accountServer: api endpoint component for the account call (1st call)
+  - choose the closest among america, asia, europe
+matchServer: api endpoint component for the match call (2nd and 3rd call)
+  - america: NA, BR, LAN, LAS
+  - asia: KR, JP
+  - europe: EUNE, EUW, ME1, TR, RU
+  - sea: OCE, SG2 (TH2 & PH2), TW2, VN2
+*/
+
+/*
+ */
 const regionList = [
   {
     full: "North America",
     abbr: "NA",
     abbrWithNum: "NA1",
+    accountServer: "americas",
+    matchServer: "americas",
   },
   {
     full: "Brazil",
     abbr: "BR",
     abbrWithNum: "BR1",
+    accountServer: "americas",
+    matchServer: "americas",
   },
   {
     full: "Europe Nordic & East",
     abbr: "EUNE",
     abbrWithNum: "EUN1",
+    accountServer: "europe",
+    matchServer: "europe",
   },
   {
     full: "Europe West",
     abbr: "EUW",
     abbrWithNum: "EUW1",
+    accountServer: "europe",
+    matchServer: "europe",
   },
   {
     full: "Japan",
     abbr: "JP",
     abbrWithNum: "JP1",
+    accountServer: "asia",
+    matchServer: "asia",
   },
   {
     full: "Korea",
     abbr: "KR",
     abbrWithNum: "KR1",
+    accountServer: "asia",
+    matchServer: "asia",
   },
   {
     full: "Latin America North",
     abbr: "LAN",
     abbrWithNum: "LA1",
+    accountServer: "americas",
+    matchServer: "americas",
   },
   {
     full: "Latin America South",
     abbr: "LAS",
     abbrWithNum: "LA2",
+    accountServer: "americas",
+    matchServer: "americas",
   },
   {
     full: "Middle East",
     abbr: "ME",
     abbrWithNum: "ME1",
+    accountServer: "europe",
+    matchServer: "europe",
   },
   {
     full: "Oceania",
     abbr: "OCE",
     abbrWithNum: "OCE",
+    accountServer: "asia",
+    matchServer: "sea",
   },
-  {
-    full: "Philippine",
-    abbr: "PH",
-    abbrWithNum: "PH2",
-  },
+  // merged to SG2
+  // {
+  //   full: "Philippine",
+  //   abbr: "PH",
+  //   abbrWithNum: "PH2",
+  // },
   {
     full: "Russia",
     abbr: "RU",
     abbrWithNum: "RU1",
+    accountServer: "europe",
+    matchServer: "europe",
   },
   {
     full: "Singapore, Malaysia & Indonesia",
     abbr: "SG",
     abbrWithNum: "SG2",
+    accountServer: "asia",
+    matchServer: "sea",
   },
   {
     full: "Taiwan, Hong Kong & Macao",
     abbr: "TW",
     abbrWithNum: "TW2",
+    accountServer: "asia",
+    matchServer: "sea",
   },
-  {
-    full: "Thailand",
-    abbr: "TH",
-    abbrWithNum: "TH2",
-  },
+  // merged to SG2
+  // {
+  //   full: "Thailand",
+  //   abbr: "TH",
+  //   abbrWithNum: "TH2",
+  // },
   {
     full: "Turkey",
     abbr: "TR",
     abbrWithNum: "TR1",
+    accountServer: "europe",
+    matchServer: "europe",
   },
   {
     full: "Vietnam",
     abbr: "VN",
     abbrWithNum: "TR2",
+    accountServer: "asia",
+    matchServer: "sea",
   },
 ];
 

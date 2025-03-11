@@ -13,19 +13,20 @@ const apiKey = fs
   .toString()
   .trim();
 
-// https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{Name}/{Tag}
+// first API call
+// https://{accountServer}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{name}/{nag}
 const URL_accountByNameAndTag =
-  "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/";
+  ".api.riotgames.com/riot/account/v1/accounts/by-riot-id/";
 
-// https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{Puuid}/ids?queue=450
-const URL_matchesByPuuid1 =
-  "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/";
+// second API call
+// https://{matchServer}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue=450
+const URL_matchesByPuuid1 = ".api.riotgames.com/lol/match/v5/matches/by-puuid/";
 
 const URL_matchesByPuuid2 = `ids?queue=450&count=${numMatches}`;
 
-// https://americas.api.riotgames.com/lol/match/v5/matches/{testMatchID}
-const URL_matchByMatchid =
-  "https://americas.api.riotgames.com/lol/match/v5/matches/";
+// third API call
+// https://{matcherServer}.api.riotgames.com/lol/match/v5/matches/{matchID}
+const URL_matchByMatchid = ".api.riotgames.com/lol/match/v5/matches/";
 
 // test purpose, my puuid, one of my matches
 const EXAMPLE_puuid =

@@ -30,7 +30,9 @@ function ChampionSummary(props) {
         <span>{round(props.assist / (props.win + props.lose), 1, false)}</span>
         <br />
         KDA:&nbsp;
-        {round((props.kill + props.assist) / props.death, 2, false)}
+        {props.death === 0
+          ? "Perfect"
+          : round((props.kill + props.assist) / props.death, 2, false)}
       </p>
     </div>
   );

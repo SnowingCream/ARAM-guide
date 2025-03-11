@@ -24,7 +24,7 @@ function stopShake() {
 function Body() {
   const navigate = useNavigate();
 
-  // comeback later
+  // come back later for api endpoint specification for each player
   // const callRoot = async () => {
   //   axios.get("/api").then((res) => console.log(res.data.test));
   // };
@@ -98,7 +98,7 @@ function Body() {
       setWarningMessage("Please fill out at least one of the input fields.");
       warningMessageTag.style.display = "inline";
       searchButton.classList.add("apply-shake");
-      // valid case 1: champion build search
+      // valid case 1: champion build search -> have not been implemented yet.
     } else if (championInputValue) {
       setWarningMessage(
         "Valid search, but champion build feature has not been implemented yet."
@@ -107,13 +107,16 @@ function Body() {
       // valid case 2: player record search
       // these 2 variables are sufficient for user search and match shistory serach.
     } else {
+      let idx = parseInt(document.getElementById("region").value.split("_")[0]);
+
+      dataToSend.accountServer = regionList[idx].accountServer;
+      dataToSend.matchServer = regionList[idx].matchServer;
       // user has non-default tag
       if (playerInputValue.includes("#")) {
         dataToSend.name = playerInputValue.split("#")[0];
         dataToSend.tag = playerInputValue.split("#")[1];
-        console.log("tag provided");
+        dataToSend.console.log("tag provided");
       }
-
       // user has not provided a tag
       else {
         dataToSend.name = playerInputValue;
@@ -129,8 +132,8 @@ function Body() {
     <div className="container px-3 py-5 my-5 text-center">
       <h1 className="display-5 fw-bold text-body-emphasis">ARAM Guide</h1>
       <p className="lead mb-4">
-        Check out most popular ARAM builds for champions, and track your ARAM
-        records.
+        Check out the most popular ARAM builds for champions, and track your
+        ARAM records.
       </p>
       <input
         type="text"
@@ -162,7 +165,8 @@ function Body() {
         </div>
       </div>
       <small>
-        If you are unsure about your tag, choosing the region may be sufficient.
+        If you are unsure about your tag, choosing the region may be sufficient
+        (will be searched with the default tag).
       </small>
 
       <button

@@ -47,12 +47,15 @@ async function axiosGet(URL) {
 
 // batch call for the third api call (each match's details)
 // rate limit is 20 per sec
-async function batchApiCalls(urls, batchSize) {
+async function batchApiCalls(urls, matchServer, batchSize) {
   const results = [];
   for (let i = 0; i < urls.length; i += batchSize) {
     const batch = urls.slice(i, i + batchSize);
+    // console.log("this may be the problem: ", req.body.matchServer);
     const batchResults = await Promise.all(
-      batch.map((url) => axiosGet(URL_matchByMatchid + url))
+      batch.map((url) =>
+        axiosGet("https://" + matchServer + URL_matchByMatchid + url)
+      )
     );
     results.push(...batchResults);
     console.log(
@@ -80,20 +83,32 @@ router.post(`/player`, (req, res) => {
     try {
       // First call
       const firstURL =
-        URL_accountByNameAndTag + req.body.name + "/" + req.body.tag;
+        "https://" +
+        req.body.accountServer +
+        URL_accountByNameAndTag +
+        req.body.name +
+        "/" +
+        req.body.tag;
+      console.log("first url: ", firstURL);
       firstResult = await axiosGet(firstURL);
       console.log("First API call completed");
 
       // Second call using the result from the first call
       const secondURL =
-        URL_matchesByPuuid1 + firstResult.puuid + "/" + URL_matchesByPuuid2;
+        "https://" +
+        req.body.matchServer +
+        URL_matchesByPuuid1 +
+        firstResult.puuid +
+        "/" +
+        URL_matchesByPuuid2;
+      console.log("second url: ", secondURL);
       secondResult = await axiosGet(secondURL);
       console.log("Second API call completed");
       await sleep(1000);
 
       // Third call using the result from the second call: batch (faster)
       const startTime = performance.now(); // Record start time
-      thirdResult = await batchApiCalls(secondResult, 20); // Batch size of 10
+      thirdResult = await batchApiCalls(secondResult, req.body.matchServer, 20); // Batch size of 20
       const endTime = performance.now(); // Record end time
 
       // Third call using the result from the second call: linear (slower)
@@ -107,6 +122,22 @@ router.post(`/player`, (req, res) => {
       // const endTime = performance.now(); // Record end time
 
       console.log("Third API call completed");
+
+      let lastIndex = -1;
+      // check the version of each matchresult. Only proceed with version 14 and 15 (2024 and 2025)
+      for (let i = 0; i < thirdResult.length; i++) {
+        const version = parseInt(thirdResult[i].info.gameVersion.split(".")[0]);
+        // console.log(version);
+        if (version < 14) {
+          lastIndex = i;
+          break;
+        }
+      }
+
+      if (lastIndex != -1) {
+        thirdResult = thirdResult.slice(0, lastIndex);
+        console.log("Third API call processed (removed records before 2024)");
+      }
 
       console.log(
         `Execution time: ${(endTime - startTime).toFixed(2)} milliseconds`
