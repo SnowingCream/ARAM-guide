@@ -103,7 +103,9 @@ function MatchDetailOverview(props) {
         <span>{player.assist}</span>
         <br />
         KDA:&nbsp;
-        {round((player.kill + player.assist) / player.death, 2, false)}
+        {player.death === 0
+          ? "Perfect"
+          : round((player.kill + player.assist) / player.death, 2, false)}
       </p>
     </div>
   );

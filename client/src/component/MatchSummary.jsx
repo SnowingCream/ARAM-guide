@@ -156,7 +156,9 @@ function MatchSummary(props) {
           <span>{user.assist}</span>
           <br />
           KDA:&nbsp;
-          {round((user.kill + user.assist) / user.death, 2, false)}
+          {user.death === 0
+            ? "Perfect"
+            : round((user.kill + user.assist) / user.death, 2, false)}
         </p>
         <button className="col-1 btn rounded-pill" onClick={getMatchDetail}>
           <p className="mb-0">Details</p>
