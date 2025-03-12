@@ -72,7 +72,11 @@ function MatchSummary(props) {
     <div>
       <div
         className={`row py-1 align-items-center justify-content-center ${
-          user.win ? "bg-primary" : "bg-danger"
+          user.earlySurrendered
+            ? "bg-secondary"
+            : user.win
+            ? "bg-primary"
+            : "bg-danger"
         }`}
       >
         <p className="col-4 mb-0 match-time">
