@@ -5,6 +5,7 @@ import {
   getSecondRuneStyleImageLocation,
   getSpellImageLocation,
   getItemImageLocation,
+  masterpiece,
 } from "../asset/var.js";
 
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -50,7 +51,7 @@ function MatchDetailOverview(props) {
         </div>
       </div>
 
-      <div className="col-5">
+      <div className="col-5 align-items-center justify-content-center">
         <div className="row">
           <OverlayTrigger
             placement="top"
@@ -61,17 +62,35 @@ function MatchDetailOverview(props) {
             <p className="mb-0 text-truncate">{`${player.userName}`}</p>
           </OverlayTrigger>
         </div>
-        <div className="row">
-          <div className="col">
-            {player.items.map((code) =>
-              code !== 0 ? (
-                <img
-                  className="item-img-small"
-                  src={getItemImageLocation(code)}
-                  alt={`item ${code.index}`}
-                />
-              ) : null
-            )}
+        <div className="col d-flex align-items-center justify-content-center">
+          <div className="row item-grid-one-row">
+            {player.items.map((code, idx) => {
+              if (code === 0) return null; // Skip rendering if code is 0
+
+              // Check if the code exists in masterpiece map
+              const isMasterpiece = masterpiece.has(code);
+              const itemCode = isMasterpiece ? masterpiece.get(code) : code;
+
+              return (
+                <div key={idx} className="col-2 px-0 position-relative">
+                  {/* Base Item Image */}
+                  <img
+                    className="item-img-small"
+                    src={getItemImageLocation(itemCode)}
+                    alt={`item ${idx + 1}`}
+                  />
+
+                  {/* Overlaying Border Image if it's a masterpiece item */}
+                  {isMasterpiece && (
+                    <img
+                      className="item-img-small item-overlay position-absolute top-0 start-0 w-100 h-100"
+                      src={"asset/img/BorderTreatmentOrnn.png"}
+                      alt="Masterpiece Border"
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

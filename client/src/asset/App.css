@@ -139,8 +139,14 @@ small {
   margin-bottom: 0.5rem;
 }
 
-.item-grid {
+/* match summary item grid */
+.item-grid-two-rows {
   width: 72px;
+}
+
+/* match detail overview item grid */
+.item-gri-one-row {
+  width: 144px;
 }
 
 .row {

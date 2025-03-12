@@ -135,8 +135,12 @@ router.post(`/player`, (req, res) => {
       }
 
       if (lastIndex != -1) {
+        console.log(
+          `Third API call processed (removed ${
+            thirdResult.length - lastIndex
+          } records that are before version 14)`
+        );
         thirdResult = thirdResult.slice(0, lastIndex);
-        console.log("Third API call processed (removed records before 2024)");
       }
 
       console.log(

@@ -5,6 +5,7 @@ import {
   getPrimaryRuneImageLocation,
   getSecondRuneStyleImageLocation,
   getItemImageLocation,
+  masterpiece,
 } from "../asset/var.js";
 import React, { useState } from "react";
 import MatchDetailContainer from "./MatchDetailContainer.jsx";
@@ -116,18 +117,34 @@ function MatchSummary(props) {
         </div>
 
         <div className="col-2 d-flex align-items-center justify-content-center">
-          <div className="row item-grid">
-            {user.items.map((code, idx) =>
-              code !== 0 ? (
-                <div key={idx} className="col-4 px-0">
+          <div className="row item-grid-two-rows">
+            {user.items.map((code, idx) => {
+              if (code === 0) return null; // Skip rendering if code is 0
+
+              // Check if the code exists in masterpiece map
+              const isMasterpiece = masterpiece.has(code);
+              const itemCode = isMasterpiece ? masterpiece.get(code) : code;
+
+              return (
+                <div key={idx} className="col-4 px-0 position-relative">
+                  {/* Base Item Image */}
                   <img
                     className="item-img-small"
-                    src={getItemImageLocation(code)}
+                    src={getItemImageLocation(itemCode)}
                     alt={`item ${idx + 1}`}
                   />
+
+                  {/* Overlaying Border Image if it's a masterpiece item */}
+                  {isMasterpiece && (
+                    <img
+                      className="item-img-small item-overlay position-absolute top-0 start-0 w-100 h-100"
+                      src={"asset/img/BorderTreatmentOrnn.png"}
+                      alt="Masterpiece Border"
+                    />
+                  )}
                 </div>
-              ) : null
-            )}
+              );
+            })}
           </div>
         </div>
 

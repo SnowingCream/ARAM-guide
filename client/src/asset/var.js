@@ -1,4 +1,4 @@
-import champion from "./data_dragon/champion.json";
+import champion from "../asset/data_dragon/champion.json";
 import spell from "../asset/data_dragon/summoner.json";
 import rune from "../asset/data_dragon/runesReforged.json";
 
@@ -155,6 +155,56 @@ const sortButtonList = [
   },
 ];
 
+// ornn's masterpiece up to 14.11
+// convert to its original item code, and cover it with the border.
+const masterpiece = new Map([
+  [227029, 223142],
+  [227030, 223124],
+  [227031, 223031],
+  [227032, 226675],
+  [7000, 6693],
+  [7001, 6692],
+  [7002, 6691],
+  [7003, 3089],
+  [7004, 3118],
+  [7005, 6662],
+  [7006, 6671],
+  [7007, 6699],
+  [7008, 6697],
+  [7009, 4633],
+  [7010, 4636],
+  [7011, 3152],
+  [7012, 6653],
+  [7013, 6655],
+  [7014, 6656],
+  [7015, 6630],
+  [7016, 6631],
+  [7017, 6632],
+  [7018, 3078],
+  [7019, 3190],
+  [7020, 2065],
+  [7021, 6617],
+  [7022, 6701],
+  [7024, 4644],
+  [7025, 3084],
+  [7026, 6665],
+  [7028, 6657],
+  [7029, 3142],
+  [7030, 3124],
+  [7031, 3031],
+  [7032, 6675],
+  [7033, 6620],
+  [7034, 2502],
+  [7035, 6621],
+  [7036, 3073],
+  [7037, 3071],
+  [7038, 3161],
+  [7039, 6610],
+  [7040, 3095],
+  [7041, 6672],
+  [7042, 3115],
+]);
+
 function round(value, digitAfterDecimal, percent = true) {
   if (percent) {
     return (
@@ -237,6 +287,7 @@ function getItemImageLocation(code) {
 export {
   regionList,
   sortButtonList,
+  masterpiece,
   round,
   getChampionImageLocation,
   getSpellImageLocation,
