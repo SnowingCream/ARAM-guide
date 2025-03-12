@@ -14,7 +14,13 @@ function Calendar(props) {
 
   // extract keyDate from date object
   function getKeyDate(date) {
-    return date.getMonth().toString() + " / " + date.getDate().toString();
+    return (
+      date.getFullYear().toString() +
+      " / " +
+      date.getMonth().toString() +
+      " / " +
+      date.getDate().toString()
+    );
   }
 
   // compute the winning rate of the given rate.
@@ -55,7 +61,7 @@ function Calendar(props) {
       calendarType="gregory"
       // if there is a record for the given day, show win, lose, and winning rate.
       tileContent={({ date, view }) =>
-        view === "month" && dailyRecords.get(getKeyDate(date)) ? (
+        view === "month" && dailyRecords.has(getKeyDate(date)) ? (
           <p>
             <span style={{ color: "blue" }}>
               {dailyRecords.get(getKeyDate(date)).win}
@@ -77,9 +83,7 @@ function Calendar(props) {
         null
       }
       // disable dates without record -> for date-based filtering feature in the future.
-      tileDisabled={({ date }) =>
-        dailyRecords.get(getKeyDate(date)) === undefined
-      }
+      tileDisabled={({ date }) => !dailyRecords.has(getKeyDate(date))}
     />
   );
 }

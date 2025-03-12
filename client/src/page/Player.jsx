@@ -55,6 +55,8 @@ function Player() {
     );
 
     const mapKeyDate =
+      recordDate.getFullYear().toString() +
+      " / " +
       recordDate.getMonth().toString() +
       " / " +
       recordDate.getDate().toString();
