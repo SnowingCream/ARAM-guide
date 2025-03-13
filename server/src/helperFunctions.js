@@ -42,4 +42,15 @@ async function axiosGet(URL) {
   }
 }
 
-export { round, sleep, axiosGet };
+// based on the return value of DB insertion function, update the counts
+function DBResultHandle(val, counts) {
+  if (val === true) {
+    counts[0] += 1;
+  } else if (val === false) {
+    counts[1] += 1;
+  } else {
+    counts[2] += 1;
+  }
+}
+
+export { round, sleep, axiosGet, DBResultHandle };

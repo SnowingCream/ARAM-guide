@@ -1,11 +1,14 @@
+// RETURNING * to ditinguish if the data is added or not.
+
 // insert query for matches table
 const DB_matches_query = `
   INSERT INTO matches (match_id, game_duration, remake, game_start, game_end, version_1, version_2)
   VALUES ($1, $2, $3, $4, $5, $6, $7)
-  ON CONFLICT (match_id)
-  DO NOTHING`;
+  ON CONFLICT (match_id) DO NOTHING
+  RETURNING *`;
 
 // insert query for accounts table
+// xmax: 0 for insertion, > 0 for update
 const DB_accounts_query = `
   INSERT INTO accounts (puuid, user_name, tag, lvl, icon_id)
   VALUES ($1, $2, $3, $4, $5)
@@ -14,7 +17,8 @@ const DB_accounts_query = `
     user_name = EXCLUDED.user_name,
     tag = EXCLUDED.tag,
     lvl = EXCLUDED.lvl,
-    icon_id = EXCLUDED.icon_id`;
+    icon_id = EXCLUDED.icon_id
+  RETURNING *, xmax`;
 
 // insert query for match_account table
 const DB_match_account_query = `
@@ -26,7 +30,7 @@ const DB_match_account_query = `
   item_0)
   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, 
   $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50) 
-  ON CONFLICT (match_id, puuid)
-  DO NOTHING`;
+  ON CONFLICT (match_id, puuid) DO NOTHING
+  RETURNING *`;
 
 export { DB_accounts_query, DB_matches_query, DB_match_account_query };

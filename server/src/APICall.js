@@ -104,4 +104,47 @@ async function versionCheck(matchDetails) {
   }
 }
 
-export { firstAPICall, secondAPICall, thirdAPICall, versionCheck };
+// a caller function of 4 functions, which will be called in order.
+// must return the last result after sending it to the frontend, because DB flow also needs it.
+async function flow(userInfo, res) {
+  try {
+    const firstResult = await firstAPICall(
+      userInfo.accountServer,
+      userInfo.name,
+      userInfo.tag
+    );
+    const secondResult = await secondAPICall(
+      userInfo.matchServer,
+      firstResult.puuid
+    );
+    await sleep(1000);
+    const startTime = performance.now(); // Record start time
+    const thirdResult = await thirdAPICall(
+      secondResult,
+      userInfo.matchServer,
+      20
+    ); // Batch size of 20
+    const endTime = performance.now(); // Record end time
+    console.log(
+      `Batch API calls execution time: ${(endTime - startTime).toFixed(
+        2
+      )} milliseconds`
+    );
+    const finalResult = await versionCheck(thirdResult);
+    res.send({
+      account: {
+        userName: userInfo.name,
+        tag: userInfo.tag,
+        puuid: firstResult.puuid,
+      },
+      matchRecords: finalResult,
+    });
+    console.log("API call successfully completed");
+    return finalResult;
+  } catch (error) {
+    res.send(error.message);
+    console.error(`post request (the main flow) failed: ${error.message}`);
+  }
+}
+
+export default flow;
