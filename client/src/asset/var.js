@@ -156,7 +156,7 @@ const sortButtonList = [
 ];
 
 // ornn's masterpiece up to 14.11
-// convert to its original item code, and cover it with the border.
+// convert to its original item code.
 const masterpiece = new Map([
   [227029, 223142],
   [227030, 223124],

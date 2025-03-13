@@ -24,11 +24,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# api key
-server/apiKey.txt
-
-# DB password
-server/dbPassword.txt
+# api key and DB password
+/server/src/secrets/*
 
 # examples of api-returned json
 /json_example/*

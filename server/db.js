@@ -7,7 +7,7 @@ const { Pool } = pkg;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const DBPassword = fs
-  .readFileSync(__dirname + "/dbPassword.txt")
+  .readFileSync(__dirname + "/src/secrets/dbPassword.txt")
   .toString()
   .trim();
 
