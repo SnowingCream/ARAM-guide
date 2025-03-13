@@ -112,10 +112,13 @@ function Body() {
       dataToSend.accountServer = regionList[idx].accountServer;
       dataToSend.matchServer = regionList[idx].matchServer;
       // user has non-default tag
+      // console.log("Player input value: ", playerInputValue);
+      // console.log(playerInputValue.includes("#"));
       if (playerInputValue.includes("#")) {
-        dataToSend.name = playerInputValue.split("#")[0];
-        dataToSend.tag = playerInputValue.split("#")[1];
-        dataToSend.console.log("tag provided");
+        const InputParsed = playerInputValue.split("#");
+        dataToSend.name = InputParsed[0];
+        dataToSend.tag = InputParsed[1];
+        console.log("tag provided");
       }
       // user has not provided a tag
       else {
