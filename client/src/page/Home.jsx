@@ -42,13 +42,19 @@ function Body() {
 
   const callPlayer = async (data) => {
     console.log("sending data: ", data);
-    axios.post("/api/player", data).then((res) => {
-      console.log(res.data);
+    // variable from .env file, which is generated from deploy-local.sh
+    // In React, the prefix REACT_APP_ is required to expose the variable
+    axios
+      .post(`${process.env.REACT_APP_BACKEND_URL}/api/player`, data)
+      .then((res) => {
+        // for local development using proxy
+        // axios.post("/api/player", data).then((res) => {
+        console.log(res.data);
 
-      // const final_address = `/player/${data.name}#${data.tag}`;
-      // navigate(final_address, { state: res.data });
-      navigate("/player", { state: res.data });
-    });
+        // const final_address = `/player/${data.name}#${data.tag}`;
+        // navigate(final_address, { state: res.data });
+        navigate("/player", { state: res.data });
+      });
   };
 
   // effect runs after DOM is rendered.

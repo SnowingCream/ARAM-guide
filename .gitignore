@@ -19,21 +19,27 @@ yarn-debug.log*
 yarn-error.log*
 
 
-# examples of api-returned json
-/json_example
-
-
 # clicent side
 # images and json from data dragon
 /client/public/asset/img
 /client/src/asset/data_dragon
 /client/node_modules
+# variable for the shell script workflow automation
+/client/.env
 
 # server side
 # api key and DB password
 /server/src/secrets/*
 /server/node_modules
+# variable for the shell script workflow automation
+/server/.env
 
 # root folder
+# examples of api-returned json files (reference)
+/json_example
+# EC2 instance SSH certificate
+/aram-web-server.pem
+# server public IPs 
+/config.sh
 /node_modules
 
