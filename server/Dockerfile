@@ -14,7 +14,8 @@ RUN npm install
 COPY . .
 
 # Expose backend port (Change this based on your setup)
-EXPOSE 5000
+# just a documentation, the main thing is the port setup in server.js
+EXPOSE 4001
 
 # Start the server
 CMD ["npm", "start"]
