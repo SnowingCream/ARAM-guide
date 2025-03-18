@@ -14,6 +14,15 @@ GREEN="\033[1;32m"
 RESET="\033[0m"
 
 #===========================#
+# CLEANUP OLD DOCKER IMAGES #
+#===========================#
+echo -e "${BLUE}=============================================${RESET}"
+echo -e "${GREEN}Cleaning up Docker images and volumes...${RESET}"
+echo -e "${BLUE}=============================================${RESET}"
+docker system prune -a --volumes -f
+echo -e "${GREEN}Docker cleanup done.${RESET}"
+
+#===========================#
 #    GENERATE .env FILES    #
 #===========================#
 
