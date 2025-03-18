@@ -15,7 +15,7 @@ router.get("/champion", (req, res) => {
 router.post(`/player`, (req, res) => {
   (async () => {
     const DBData = await APICall(req.body, res);
-    // await DBInsert(DBData); -> DB setup later
+    await DBInsert(DBData);
   })();
 });
 

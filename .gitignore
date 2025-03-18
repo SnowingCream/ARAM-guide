@@ -26,6 +26,8 @@ yarn-error.log*
 /client/node_modules
 # variable for the shell script workflow automation
 /client/.env
+# a file for API product review application to Riot games
+/client/public/riot.txt
 
 # server side
 # api key and DB password
