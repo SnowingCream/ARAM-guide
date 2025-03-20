@@ -1,100 +1,126 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import ChampionSummary from "./ChampionSummary.jsx";
 import SortButton from "./SortButton.jsx";
 import { sortButtonList, round } from "../asset/var.js";
 
-function ChampionSummaryContainer(props) {
-  const championArray = Array.from(props.data); // starting point: input map converted to array with each element: [key, value]
-  const [sortedChampions, setSortedChampions] = useState([]); // ending point: the result of sort in which map() will be called upon, used for rendering the champion summary as well.
-  const [sortCriterion, setSortCriterion] = useState("numberOfPlays"); // sorting criterion, used for updating the button as well.
-  const [isDescending, setIsDescending] = useState(false); // sorting order condition, used for updating the sorting order icon as well.
-  const isInitialRender = useRef(true); // to disable useEfect() for the initial setup of state.
+function ChampionSummaryContainer({
+  matchRecords,
+  selectedDate,
+  selectedChampion,
+  onChampionClick,
+}) {
+  const [sortedChampions, setSortedChampions] = useState([]);
+  const [sortCriterion, setSortCriterion] = useState("numberOfPlays");
+  const [isDescending, setIsDescending] = useState(true);
 
-  // set up the proper sorting conditions: criterion and order.
-  // setting those states will trigger useEffect(), in which the actual sort takes place.
+  useEffect(() => {
+    // empty data guard
+    if (!matchRecords || matchRecords.length === 0) {
+      setSortedChampions([]);
+      return;
+    }
+
+    // Dynamically recompute champion stats
+    const dynamicChampionRecords = new Map();
+
+    matchRecords.forEach((record) => {
+      // check if selected date matches.
+      const recordDate = new Date(record.gameStart);
+      const recordKeyDate =
+        recordDate.getFullYear().toString() +
+        " / " +
+        recordDate.getMonth().toString() +
+        " / " +
+        recordDate.getDate().toString();
+
+      if (selectedDate && recordKeyDate !== selectedDate) return;
+
+      // calculate stat of matching champions
+      record.playerRecords.forEach((player) => {
+        if (player.user) {
+          const champ = player.champion;
+          const existing = dynamicChampionRecords.get(champ) || {
+            win: 0,
+            lose: 0,
+            kill: 0,
+            death: 0,
+            assist: 0,
+          };
+
+          if (player.win) {
+            existing.win++;
+          } else {
+            existing.lose++;
+          }
+
+          existing.kill += player.kill;
+          existing.death += player.death;
+          existing.assist += player.assist;
+
+          dynamicChampionRecords.set(champ, existing);
+        }
+      });
+    });
+
+    // sorting
+    const championArray = Array.from(dynamicChampionRecords);
+
+    const sortedArray = championArray.sort((a, b) => {
+      const championA = isDescending ? b[1] : a[1];
+      const championB = isDescending ? a[1] : b[1];
+
+      const comparedNumberOfPlays =
+        championA.win + championA.lose - (championB.win + championB.lose);
+      const comparedWinningRate =
+        round(championA.win / (championA.win + championA.lose), 2) -
+        round(championB.win / (championB.win + championB.lose), 2);
+      const comparedKDA =
+        round((championA.kill + championA.assist) / championA.death, 2) -
+        round((championB.kill + championB.assist) / championB.death, 2);
+
+      if (sortCriterion === "numberOfPlays") {
+        if (comparedNumberOfPlays !== 0) return comparedNumberOfPlays;
+        if (comparedWinningRate !== 0) return comparedWinningRate;
+        return comparedKDA;
+      } else if (sortCriterion === "winningRate") {
+        if (comparedWinningRate !== 0) return comparedWinningRate;
+        if (comparedNumberOfPlays !== 0) return comparedNumberOfPlays;
+        return comparedKDA;
+      } else if (sortCriterion === "KDA") {
+        if (comparedKDA !== 0) return comparedKDA;
+        if (comparedNumberOfPlays !== 0) return comparedNumberOfPlays;
+        return comparedWinningRate;
+      } else {
+        return 0;
+      }
+    });
+
+    setSortedChampions(sortedArray);
+  }, [matchRecords, selectedDate, sortCriterion, isDescending]);
+
+  // Sorting button handler
   function sortChampions(criterion) {
-    // If the same criterion button is clicked more than once, shift between sorting order conditions.
+    // if sorting button is selected and clicked twice, flip the sorting order.
     if (sortCriterion === criterion) {
       setIsDescending(!isDescending);
-      // If the criterion changes, start from descending sort.
+      // if sorting button is selected for the first time, default sorting order is descending.
     } else {
       setSortCriterion(criterion);
       setIsDescending(true);
     }
   }
 
-  // initial sorting after all states are set.
-  useEffect(() => {
-    sortChampions("numberOfPlays");
-    // don't touch the comment below! it is to remove the warning message.
-    // eslint-disable-next-line
-  }, []);
-
-  // sorting when the user presses buttons.
-  useEffect(() => {
-    // Skip sorting for the initial setup of states.
-    if (isInitialRender.current) {
-      isInitialRender.current = false;
-    } else {
-      // console.log(`triggered with isAscending: ${isDescending}`);
-
-      const sortedArray = championArray.sort((a, b) => {
-        const championA = isDescending ? b[1] : a[1];
-        const championB = isDescending ? a[1] : b[1];
-
-        // sorting order: NumberOfPlays, WinningRate, KDA
-        // if one of them is selected by the user, that goes to the first, and the rest is still in the order above.
-
-        const comparedNumberOfPlays =
-          championA.win + championA.lose - (championB.win + championB.lose);
-        const comparedWinningRate =
-          round(championA.win / (championA.win + championA.lose), 2) -
-          round(championB.win / (championB.win + championB.lose), 2);
-        const comparedKDA =
-          round((championA.kill + championA.assist) / championA.death, 2) -
-          round((championB.kill + championB.assist) / championB.death, 2);
-
-        if (sortCriterion === "numberOfPlays") {
-          if (comparedNumberOfPlays !== 0) {
-            return comparedNumberOfPlays;
-          }
-          if (comparedWinningRate !== 0) {
-            return comparedWinningRate;
-          }
-          return comparedKDA;
-        } else if (sortCriterion === "winningRate") {
-          if (comparedWinningRate !== 0) {
-            return comparedWinningRate;
-          }
-          if (comparedNumberOfPlays !== 0) {
-            return comparedNumberOfPlays;
-          }
-          return comparedKDA;
-        } else if (sortCriterion === "KDA") {
-          if (comparedKDA !== 0) {
-            return comparedKDA;
-          }
-          if (comparedNumberOfPlays !== 0) {
-            return comparedNumberOfPlays;
-          }
-          return comparedWinningRate;
-        } else {
-          return 0;
-        }
-      });
-      setSortedChampions(sortedArray);
-    }
-
-    // don't touch the comment below! it is to remove the warning message.
-    // eslint-disable-next-line
-  }, [sortCriterion, isDescending]);
+  // Apply champion filter (show only selected if applied)
+  const visibleChampions = selectedChampion
+    ? sortedChampions.filter(([key]) => key === selectedChampion)
+    : sortedChampions;
 
   return (
     <div className="mx-auto">
       <div
         className="btn-group mb-3"
         role="group"
-        aria-label="Basic radio toggle button group"
+        aria-label="Sorting toggle button group"
       >
         {sortButtonList.map((data) => (
           <SortButton
@@ -109,16 +135,24 @@ function ChampionSummaryContainer(props) {
         ))}
       </div>
 
-      {sortedChampions.map(([key, value]) => (
-        <ChampionSummary
+      {visibleChampions.map(([key, value]) => (
+        <div
           key={key}
-          name={key}
-          win={value.win}
-          lose={value.lose}
-          kill={value.kill}
-          death={value.death}
-          assist={value.assist}
-        />
+          onClick={() => onChampionClick(selectedChampion === key ? null : key)}
+          style={{
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          <ChampionSummary
+            name={key}
+            win={value.win}
+            lose={value.lose}
+            kill={value.kill}
+            death={value.death}
+            assist={value.assist}
+          />
+        </div>
       ))}
     </div>
   );

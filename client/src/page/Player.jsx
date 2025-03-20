@@ -4,14 +4,26 @@ import Calendar from "../component/Calendar.jsx";
 import { round } from "../asset/var.js";
 import ChampionSummaryContainer from "../component/ChampionSummaryContainer.jsx";
 import MatchSummaryContainer from "../component/MatchSummaryContainer.jsx";
+import { useState } from "react";
 
 function Player() {
   // useLocation gives us access to the current location object
   const location = useLocation();
 
+  const [selectedDate, setSelectedDate] = useState(null); // for date selected in Calendar
+  const [selectedChampion, setSelectedChampion] = useState(null); // for champion selected in ChampionSummaryContainer
+
   // Destructure 'returnedData' from location.state,
   // or fallback to an empty object if state is undefined.
   const dataFromApi = location.state || {};
+
+  function handleDateClick(dateKeyStringOrNull) {
+    setSelectedDate(dateKeyStringOrNull);
+  }
+
+  function handleChampionClick(championOrNull) {
+    setSelectedChampion(championOrNull);
+  }
 
   // get a userIndex of the game record of given index.
   function getUserindex(recordIdx) {
@@ -208,6 +220,26 @@ function Player() {
     userData.matchRecords.push(matchRecord);
   }
 
+  // ----------------- Filter matchRecords based on BOTH filters (date and champion) -------------
+  const filteredMatchRecords = userData.matchRecords.filter((record) => {
+    const recordDate = new Date(record.gameStart);
+    const recordKeyDate =
+      recordDate.getFullYear().toString() +
+      " / " +
+      recordDate.getMonth().toString() +
+      " / " +
+      recordDate.getDate().toString();
+
+    const dateMatches = selectedDate ? recordKeyDate === selectedDate : true;
+    const championMatches = selectedChampion
+      ? record.playerRecords.some(
+          (player) => player.user && player.champion === selectedChampion
+        )
+      : true;
+
+    return dateMatches && championMatches;
+  });
+
   // img placed in public!
   const src_location =
     "asset/img/profileicon/" + profileIcon.data[user.iconId].image.full;
@@ -231,18 +263,66 @@ function Player() {
               {round(user.win / dataFromApi.matchRecords.length, 2)}%
             </p>
           </div>
-          {/* <div className="summary-overview"> */}
           <div className="row my-3">
             <div className="d-flex overview-calendar col-md-6 mx-auto my-3">
-              <Calendar data={userData.dailyRecords} />
+              <Calendar
+                matchRecords={filteredMatchRecords}
+                selectedDate={selectedDate}
+                selectedChampion={selectedChampion}
+                onDateClick={handleDateClick}
+              />
             </div>
             <div className="d-flex overview-champion col-md-6 mx-auto overflow-auto my-3">
-              <ChampionSummaryContainer data={userData.championRecords} />
+              <ChampionSummaryContainer
+                matchRecords={filteredMatchRecords}
+                selectedDate={selectedDate}
+                selectedChampion={selectedChampion}
+                onChampionClick={handleChampionClick}
+              />
             </div>
           </div>
           <div className="row my-3 justify-content-center">
+            <div className="my-3 d-flex align-items-center flex-wrap gap-2">
+              <h5 className="mb-0">Current Filters:</h5>
+
+              {selectedDate && (
+                <span className="badge bg-primary">
+                  Date: {selectedDate}
+                  <button
+                    type="button"
+                    className="btn-close btn-close-white ms-2"
+                    aria-label="Close"
+                    onClick={() => setSelectedDate(null)}
+                  ></button>
+                </span>
+              )}
+
+              {selectedChampion && (
+                <span className="badge bg-success">
+                  Champion: {selectedChampion}
+                  <button
+                    type="button"
+                    className="btn-close btn-close-white ms-2"
+                    aria-label="Close"
+                    onClick={() => setSelectedChampion(null)}
+                  ></button>
+                </span>
+              )}
+
+              {(selectedDate || selectedChampion) && (
+                <button
+                  className="btn btn-warning"
+                  onClick={() => {
+                    setSelectedDate(null);
+                    setSelectedChampion(null);
+                  }}
+                >
+                  Clear All Filters
+                </button>
+              )}
+            </div>
             <div className="col-md-12">
-              <MatchSummaryContainer data={userData.matchRecords} />
+              <MatchSummaryContainer data={filteredMatchRecords} />
             </div>
           </div>
         </div>

@@ -4,13 +4,13 @@ import "react-calendar/dist/Calendar.css";
 import "../asset/App.css";
 import { round } from "../asset/var.js";
 
-function Calendar(props) {
+function Calendar({
+  matchRecords,
+  selectedDate,
+  selectedChampion,
+  onDateClick,
+}) {
   const [value, setValue] = useState(new Date());
-  // const [view, setView] = useState("month");
-  // const [activeStartDate, setActiveStartDate] = useState(new Date());
-
-  // map with key: keyDate, values: win and lose of the keyDate
-  const dailyRecords = props.data;
 
   // extract keyDate from date object
   function getKeyDate(date) {
@@ -23,16 +23,15 @@ function Calendar(props) {
     );
   }
 
-  // compute the winning rate of the given rate.
-  function getWinningRate(date) {
-    const win = dailyRecords.get(getKeyDate(date)).win;
-    const lose = dailyRecords.get(getKeyDate(date)).lose;
-
-    return round(win / (win + lose), 1);
-  }
-
   function onChange(nextValue) {
     setValue(nextValue);
+
+    const clickedKeyDate = getKeyDate(nextValue);
+    if (selectedDate === clickedKeyDate) {
+      onDateClick(null); // remove filter if the date is clicked again
+    } else {
+      onDateClick(clickedKeyDate); // notify parent if the date is clicked for the first time
+    }
   }
 
   const currentYear = new Date().getFullYear();
@@ -50,40 +49,86 @@ function Calendar(props) {
       minDate={minDate}
       maxDate={maxDate}
       minDetail="month"
-      // activeStartDate={activeStartDate}
-      // onDrillDown={(date) => {
-      //   setView("month");
-      //   setActiveStartDate(date);
-      // }}
-      // onDrillUp={() => setView("year")}
-      // onDrillDown={console.log("or this")}
-      // maxDetail="month"
       calendarType="gregory"
       // if there is a record for the given day, show win, lose, and winning rate.
-      tileContent={({ date, view }) =>
-        view === "month" && dailyRecords.has(getKeyDate(date)) ? (
-          <p>
-            <span style={{ color: "blue" }}>
-              {dailyRecords.get(getKeyDate(date)).win}
-            </span>
+      tileContent={({ date, view }) => {
+        if (view !== "month") return null; // only apply on month view
+
+        const keyDate = getKeyDate(date);
+
+        let win = 0;
+        let lose = 0;
+
+        // Go through all filtered match records
+        matchRecords.forEach((record) => {
+          const recordDate = new Date(record.gameStart);
+          const recordKeyDate =
+            recordDate.getFullYear().toString() +
+            " / " +
+            recordDate.getMonth().toString() +
+            " / " +
+            recordDate.getDate().toString();
+
+          // If date doesn't match → skip
+          if (recordKeyDate !== keyDate) return;
+
+          // Go through player records in that match
+          record.playerRecords.forEach((player) => {
+            if (player.user) {
+              // Apply champion filter (if any)
+              if (!selectedChampion || player.champion === selectedChampion) {
+                if (player.win) {
+                  win++;
+                } else {
+                  lose++;
+                }
+              }
+            }
+          });
+        });
+
+        // If no games → return null → nothing displayed
+        if (win + lose === 0) {
+          return null;
+        }
+
+        // Calculate win rate
+        const winRate = round(win / (win + lose), 1);
+
+        return (
+          <p style={{ fontSize: "0.75rem", margin: 0 }}>
+            <span style={{ color: "blue" }}>{win}</span>
             &nbsp;/&nbsp;
-            <span style={{ color: "red" }}>
-              {dailyRecords.get(getKeyDate(date)).lose}
-            </span>
+            <span style={{ color: "red" }}>{lose}</span>
             <br />
-            {getWinningRate(date)}%
+            {winRate}%
           </p>
-        ) : // console.log(
-        //   userData.dailyRecords.get(
-        //     date.getMonth().toString() +
-        //       " / " +
-        //       date.getDate().toString()
-        //   )
-        // )
-        null
-      }
-      // disable dates without record -> for date-based filtering feature in the future.
-      tileDisabled={({ date }) => !dailyRecords.has(getKeyDate(date))}
+        );
+      }}
+      tileDisabled={({ date }) => {
+        const keyDate = getKeyDate(date);
+        const hasRecord = matchRecords.some((record) => {
+          const recordDate = new Date(record.gameStart);
+          const recordKeyDate =
+            recordDate.getFullYear().toString() +
+            " / " +
+            recordDate.getMonth().toString() +
+            " / " +
+            recordDate.getDate().toString();
+
+          return recordKeyDate === keyDate;
+        });
+
+        return !hasRecord;
+      }}
+      tileClassName={({ date, view }) => {
+        if (view !== "month") return null;
+        const keyDate = getKeyDate(date);
+        if (selectedDate === keyDate) {
+          return "selected-date";
+        }
+        return null;
+      }}
     />
   );
 }
