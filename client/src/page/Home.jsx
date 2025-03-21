@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { regionList } from "../asset/var";
 import axios from "axios";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // helper function of map() to generate options for region selection
@@ -24,52 +23,33 @@ function stopShake() {
 function Body() {
   const navigate = useNavigate();
 
-  // come back later for api endpoint specification for each player
-  // const callRoot = async () => {
-  //   axios.get("/api").then((res) => console.log(res.data.test));
-  // };
-  // const callChampion = async () => {
-  //   axios.get("/api/champion").then((res) => console.log(res.data.test));
-  // };
-
-  // const callPlayer = async (data) => {
-  //   console.log("sending data: ", data);
-  //   axios.post(`/api/player/${data.name}#${data.tag}`, data).then((res) => {
-  //     console.log(res.data);
-  //     navigate(`/player/${data.name}#${data.tag}`, { state: res.data });
-  //   });
-  // };
-
-  const callPlayer = async (data) => {
-    console.log("sending data: ", data);
-    // variable from .env file, which is generated from deploy-local.sh
-    // In React, the prefix REACT_APP_ is required to expose the variable
-    // axios
-    //   .post(`${process.env.REACT_APP_BACKEND_URL}/api/player`, data)
-    //   .then((res) => {
-    // for local development using proxy
-    axios.post("/api/player", data).then((res) => {
-      console.log(res.data);
-
-      // const final_address = `/player/${data.name}#${data.tag}`;
-      // navigate(final_address, { state: res.data });
-      navigate("/player", { state: res.data });
-    });
-  };
-
-  // effect runs after DOM is rendered.
-  // test purpose now, once button is connetecd to the function this will be removed.
-  useEffect(() => {
-    // callRoot();
-    // callChampion();
-    // callPlayer();
-  }, []);
-
   // states for hook
   const [defaultTag, setDefaultTag] = useState("NA1");
   const [warningMessage, setWarningMessage] = useState(
     "Default warning message"
   );
+
+  // progress bar and corresponding websocket reference
+  const [showProgress, setShowProgress] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const socketRef = useRef(null);
+
+  const callPlayer = async (data) => {
+    console.log("sending data: ", data);
+    // variable from .env file, which is generated from deploy-local.sh
+    // In React, the prefix REACT_APP_ is required to expose the variable
+    axios
+      .post(`${process.env.REACT_APP_BACKEND_URL}/api/player`, data)
+      .then((res) => {
+        // for local development using proxy
+        // axios.post("/api/player", data).then((res) => {
+        //   console.log(res.data);
+
+        // const final_address = `/player/${data.name}#${data.tag}`;
+        // navigate(final_address, { state: res.data });
+        navigate("/player", { state: res.data });
+      });
+  };
 
   // update default tag per region based on user's selection
   function updateDefaultTag() {
@@ -133,6 +113,35 @@ function Body() {
         console.log("tag not provided");
       }
       console.log(dataToSend);
+      setShowProgress(true); // Show bar
+      setProgress(0); // Reset to 0
+
+      // === WebSocket Connection ===
+      const backendURL = process.env.REACT_APP_BACKEND_URL;
+      const backendHost = backendURL.replace(/^https?:\/\//, ""); // regex handles both http & https
+
+      socketRef.current = new WebSocket(`wss://${backendHost}/ws`);
+
+      socketRef.current.onopen = () => {
+        console.log("WebSocket connected");
+      };
+
+      socketRef.current.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        if (message.type === "progress") {
+          setProgress(message.percentage);
+        }
+      };
+
+      socketRef.current.onclose = () => {
+        console.log("WebSocket disconnected");
+        setShowProgress(false); // Hide bar when done
+      };
+
+      return () => {
+        socketRef.current.close();
+      };
+
       callPlayer(dataToSend);
     }
   }
@@ -190,6 +199,19 @@ function Body() {
         Search
       </button>
       <small id="warning-message">{warningMessage}</small>
+      {/* Progress Bar */}
+      <div className="progress my-4">
+        <div
+          className="progress-bar progress-bar-striped progress-bar-animated"
+          role="progressbar"
+          style={{ width: `${progress}%` }}
+          aria-valuenow={progress}
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          {progress}%
+        </div>
+      </div>
     </div>
   );
 }

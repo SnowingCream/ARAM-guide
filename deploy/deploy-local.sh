@@ -41,7 +41,7 @@ echo -e "${GREEN}Generating frontend-side .env files...${RESET}"
 echo -e "${BLUE}=============================================${RESET}"
 
 cat <<END > ./client/.env
-REACT_APP_BACKEND_URL=http://$BACKEND_PUBLIC_IP:4001
+REACT_APP_BACKEND_URL=https://aramguide.com
 END
 
 echo -e "${GREEN}Frontend .env generated.${RESET}"
@@ -53,13 +53,13 @@ echo -e "${GREEN}Frontend .env generated.${RESET}"
 echo -e "${BLUE}=============================================${RESET}"
 echo -e "${GREEN}Building backend Docker image...${RESET}"
 echo -e "${BLUE}=============================================${RESET}"
-docker buildx build --platform linux/amd64 -t $DOCKERHUB_USER/$BACKEND_IMAGE:latest ./server --push
+docker buildx build --no-cache --platform linux/amd64 -t $DOCKERHUB_USER/$BACKEND_IMAGE:latest ./server --push
 echo -e "${GREEN}Backend image pushed to DockerHub.${RESET}"
 
 echo -e "${BLUE}=============================================${RESET}"
 echo -e "${GREEN}Building frontend Docker image...${RESET}"
 echo -e "${BLUE}=============================================${RESET}"
-docker buildx build --platform linux/amd64 -t $DOCKERHUB_USER/$FRONTEND_IMAGE:latest ./client --push
+docker buildx build --no-cache --platform linux/amd64 -t $DOCKERHUB_USER/$FRONTEND_IMAGE:latest ./client --push
 echo -e "${GREEN}Frontend image pushed to DockerHub.${RESET}"
 
 #===========================#

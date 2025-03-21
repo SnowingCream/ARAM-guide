@@ -5,9 +5,25 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import fs from "fs";
 import path from "path";
+import http from "http";
+import { WebSocketServer } from "ws";
+import router from "./api.js";
 
 const app = express();
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server, path: "/ws" });
 const port = 4001;
+
+let currentWS = null; // To store the WebSocket connection temporarily
+
+wss.on("connection", function connection(ws) {
+  console.log("WebSocket Client Connected");
+  currentWS = ws;
+  ws.on("close", () => {
+    console.log("WebSocket Client Disconnected");
+    currentWS = null;
+  });
+});
 
 // configuration from .env file, which is generated from deploy-local.sh
 dotenv.config();
@@ -39,8 +55,15 @@ app.use(
   })
 );
 
-app.use("/api", test);
+app.use(
+  "/api",
+  (req, res, next) => {
+    req.ws = currentWS; // attach websocket connection to request
+    next();
+  },
+  router
+);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });

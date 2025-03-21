@@ -14,7 +14,7 @@ router.get("/champion", (req, res) => {
 
 router.post(`/player`, (req, res) => {
   (async () => {
-    const DBData = await APICall(req.body, res);
+    const DBData = await APICall(req.body, res, req.ws); // pass websocket connection
     await DBInsert(DBData);
   })();
 });

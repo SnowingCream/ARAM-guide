@@ -51,7 +51,9 @@ echo -e "${GREEN}Build files extracted.${RESET}"
 echo -e "${BLUE}=============================================${RESET}"
 echo -e "${GREEN}Copying build files to Nginx directory...${RESET}"
 echo -e "${BLUE}=============================================${RESET}"
+# clean up old nginx files
 sudo rm -rf /var/www/html/*
-sudo cp -r /tmp/frontend-build/* /var/www/html/
+# copy contents from /tmp/frontend-build/build/*
+sudo cp -r /tmp/frontend-build/build/* /var/www/html/
 sudo systemctl restart nginx
 echo -e "${GREEN}Nginx restarted, new frontend deployed.${RESET}"

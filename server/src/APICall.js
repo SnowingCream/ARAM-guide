@@ -106,17 +106,28 @@ async function versionCheck(matchDetails) {
 
 // a caller function of 4 functions, which will be called in order.
 // must return the last result after sending it to the frontend, because DB flow also needs it.
-async function flow(userInfo, res) {
+async function flow(userInfo, res, ws = null) {
   try {
+    if (ws) ws.send(JSON.stringify({ progress: 10, message: "Starting..." }));
+
     const firstResult = await firstAPICall(
       userInfo.accountServer,
       userInfo.name,
       userInfo.tag
     );
+
+    if (ws)
+      ws.send(
+        JSON.stringify({ progress: 30, message: "Fetched account info..." })
+      );
     const secondResult = await secondAPICall(
       userInfo.matchServer,
       firstResult.puuid
     );
+    if (ws)
+      ws.send(
+        JSON.stringify({ progress: 50, message: "Fetched match IDs..." })
+      );
     await sleep(1000);
     const startTime = performance.now(); // Record start time
     const thirdResult = await thirdAPICall(
@@ -124,6 +135,10 @@ async function flow(userInfo, res) {
       userInfo.matchServer,
       20
     ); // Batch size of 20
+    if (ws)
+      ws.send(
+        JSON.stringify({ progress: 80, message: "Fetched match details" })
+      );
     const endTime = performance.now(); // Record end time
     console.log(
       `Batch API calls execution time: ${(endTime - startTime).toFixed(
@@ -131,6 +146,10 @@ async function flow(userInfo, res) {
       )} milliseconds`
     );
     const finalResult = await versionCheck(thirdResult);
+    if (ws)
+      ws.send(
+        JSON.stringify({ progress: 95, message: "Version check completed" })
+      );
     res.send({
       account: {
         userName: userInfo.name,
@@ -139,10 +158,15 @@ async function flow(userInfo, res) {
       },
       matchRecords: finalResult,
     });
+    if (ws) ws.send(JSON.stringify({ progress: 100, message: "Done!" }));
     console.log("API call successfully completed");
     return finalResult;
   } catch (error) {
     res.send(error.message);
+    if (ws)
+      ws.send(
+        JSON.stringify({ progress: -1, message: "Error: " + error.message })
+      );
     console.error(`post request (the main flow) failed: ${error.message}`);
   }
 }
