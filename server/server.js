@@ -11,7 +11,7 @@ import router from "./api.js";
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server, path: "/ws" });
+const wss = new WebSocketServer({ server });
 const port = 4001;
 
 let currentWS = null; // To store the WebSocket connection temporarily

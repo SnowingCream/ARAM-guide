@@ -108,7 +108,14 @@ async function versionCheck(matchDetails) {
 // must return the last result after sending it to the frontend, because DB flow also needs it.
 async function flow(userInfo, res, ws = null) {
   try {
-    if (ws) ws.send(JSON.stringify({ progress: 10, message: "Starting..." }));
+    if (ws)
+      ws.send(
+        JSON.stringify({
+          type: "progress",
+          progress: 10,
+          message: "Started the flow...",
+        })
+      );
 
     const firstResult = await firstAPICall(
       userInfo.accountServer,
@@ -118,7 +125,11 @@ async function flow(userInfo, res, ws = null) {
 
     if (ws)
       ws.send(
-        JSON.stringify({ progress: 30, message: "Fetched account info..." })
+        JSON.stringify({
+          type: "progress",
+          progress: 30,
+          message: "Fetched account info...",
+        })
       );
     const secondResult = await secondAPICall(
       userInfo.matchServer,
@@ -126,7 +137,11 @@ async function flow(userInfo, res, ws = null) {
     );
     if (ws)
       ws.send(
-        JSON.stringify({ progress: 50, message: "Fetched match IDs..." })
+        JSON.stringify({
+          type: "progress",
+          progress: 50,
+          message: "Fetched match IDs...",
+        })
       );
     await sleep(1000);
     const startTime = performance.now(); // Record start time
@@ -137,7 +152,11 @@ async function flow(userInfo, res, ws = null) {
     ); // Batch size of 20
     if (ws)
       ws.send(
-        JSON.stringify({ progress: 80, message: "Fetched match details" })
+        JSON.stringify({
+          type: "progress",
+          progress: 80,
+          message: "Fetched match details",
+        })
       );
     const endTime = performance.now(); // Record end time
     console.log(
@@ -148,7 +167,11 @@ async function flow(userInfo, res, ws = null) {
     const finalResult = await versionCheck(thirdResult);
     if (ws)
       ws.send(
-        JSON.stringify({ progress: 95, message: "Version check completed" })
+        JSON.stringify({
+          type: "progress",
+          progress: 95,
+          message: "Version check completed",
+        })
       );
     res.send({
       account: {
@@ -158,14 +181,21 @@ async function flow(userInfo, res, ws = null) {
       },
       matchRecords: finalResult,
     });
-    if (ws) ws.send(JSON.stringify({ progress: 100, message: "Done!" }));
+    if (ws)
+      ws.send(
+        JSON.stringify({ type: "progress", progress: 100, message: "Done!" })
+      );
     console.log("API call successfully completed");
     return finalResult;
   } catch (error) {
     res.send(error.message);
     if (ws)
       ws.send(
-        JSON.stringify({ progress: -1, message: "Error: " + error.message })
+        JSON.stringify({
+          type: "progress",
+          progress: -1,
+          message: "Error: " + error.message,
+        })
       );
     console.error(`post request (the main flow) failed: ${error.message}`);
   }

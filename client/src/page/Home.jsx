@@ -32,6 +32,9 @@ function Body() {
   // progress bar and corresponding websocket reference
   const [showProgress, setShowProgress] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [progressMessage, setProgressMessage] = useState(
+    "Default progress message"
+  );
   const socketRef = useRef(null);
 
   const callPlayer = async (data) => {
@@ -120,16 +123,18 @@ function Body() {
       const backendURL = process.env.REACT_APP_BACKEND_URL;
       const backendHost = backendURL.replace(/^https?:\/\//, ""); // regex handles both http & https
 
-      socketRef.current = new WebSocket(`wss://${backendHost}/ws`);
+      socketRef.current = new WebSocket(`wss://${backendHost}/ws/`);
 
       socketRef.current.onopen = () => {
         console.log("WebSocket connected");
+        callPlayer(dataToSend);
       };
 
       socketRef.current.onmessage = (event) => {
         const message = JSON.parse(event.data);
         if (message.type === "progress") {
-          setProgress(message.percentage);
+          setProgress(message.progress);
+          setProgressMessage(message.message);
         }
       };
 
@@ -137,12 +142,6 @@ function Body() {
         console.log("WebSocket disconnected");
         setShowProgress(false); // Hide bar when done
       };
-
-      return () => {
-        socketRef.current.close();
-      };
-
-      callPlayer(dataToSend);
     }
   }
 
@@ -200,18 +199,23 @@ function Body() {
       </button>
       <small id="warning-message">{warningMessage}</small>
       {/* Progress Bar */}
-      <div className="progress my-4">
-        <div
-          className="progress-bar progress-bar-striped progress-bar-animated"
-          role="progressbar"
-          style={{ width: `${progress}%` }}
-          aria-valuenow={progress}
-          aria-valuemin="0"
-          aria-valuemax="100"
-        >
-          {progress}%
+      {showProgress && (
+        <div>
+          <div className="progress my-4">
+            <div
+              className="progress-bar progress-bar-striped progress-bar-animated"
+              role="progressbar"
+              style={{ width: `${progress}%` }}
+              aria-valuenow={progress}
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              {progress}%
+            </div>
+          </div>
+          <small id="progress-message">{progressMessage}</small>
         </div>
-      </div>
+      )}
     </div>
   );
 }
